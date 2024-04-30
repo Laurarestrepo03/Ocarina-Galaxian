@@ -3,10 +3,14 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_square
+from src.create.prefab_creator import create_input_player, create_player
+from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
-from src.ecs.systems.s_screen_bounce import system_screen_bounce
 
 class GameEngine:
     def __init__(self) -> None:
@@ -14,9 +18,8 @@ class GameEngine:
 
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
-        self.screen = pygame.display.set_mode(
-            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 
-            pygame.SCALED)
+        self.screen = pygame.display.set_mode((self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 
+                                              pygame.SCALED)
 
         self.clock = pygame.time.Clock()
         self.is_running = False
@@ -27,12 +30,12 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
 
-        # Original framerate = 0
-        # Original bg_color (0, 200, 128)
-
     def _load_config_files(self):
-        with open("assets/cfg/window.json", encoding="utf-8") as window_file:
+        path = 'assets/cfg/'
+        with open(path + "window.json", encoding="utf-8") as window_file:
             self.window_cfg = json.load(window_file)
+        with open(path + "player.json", encoding="utf-8") as player_file:
+            self.player_cfg = json.load(player_file)
 
     async def run(self) -> None:
         self._create()
@@ -46,11 +49,10 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        create_square(self.ecs_world, 
-                        pygame.Vector2(50, 50),
-                        pygame.Vector2(150, 100),
-                        pygame.Vector2(-100, 200),
-                        pygame.Color(255, 255, 100))
+        self._player_entity = create_player(self.ecs_world, self.player_cfg)
+        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+        self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
+        create_input_player(self.ecs_world)
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -58,12 +60,13 @@ class GameEngine:
     
     def _process_events(self):
         for event in pygame.event.get():
+            system_input_player(self.ecs_world, event, self._do_action)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
     def _update(self):
         system_movement(self.ecs_world, self.delta_time)
-        system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
+        system_player_limit(self.ecs_world, self.screen)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
@@ -72,5 +75,25 @@ class GameEngine:
 
     def _clean(self):
         pygame.quit()
+
+    def _do_action(self, c_input:CInputCommand):
+        if c_input.name == "PLAYER_LEFT":
+            if c_input.phase == CommandPhase.START:
+                self._player_tag.keys_left += 1
+                if self._player_tag.keys_left == 1:
+                    self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_tag.keys_left -= 1
+                if self._player_tag.keys_left == 0:
+                    self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+        if c_input.name == "PLAYER_RIGHT":
+            if c_input.phase == CommandPhase.START:
+                self._player_tag.keys_right += 1
+                if self._player_tag.keys_right == 1:
+                    self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_tag.keys_right -= 1
+                if self._player_tag.keys_right == 0:
+                    self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
 
     
