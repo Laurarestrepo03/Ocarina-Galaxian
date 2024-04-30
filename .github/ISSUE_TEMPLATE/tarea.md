@@ -1,7 +1,7 @@
 ---
 name: 'Tarea'
 about: 'Tarea a completar'
-title: '{Número}. {Descripción}'
+title: '[Obligatorio/Bono] {Número}. {Descripción}'
 labels: ''
 assignees: ''
 
