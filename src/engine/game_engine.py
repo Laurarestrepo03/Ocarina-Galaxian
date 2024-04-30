@@ -63,7 +63,7 @@ class GameEngine:
 
     def _update(self):
         system_movement(self.ecs_world, self.delta_time)
-        system_screen_bounce(self.ecs_world, self.screen)
+        system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
 
     def _draw(self):
         self.screen.fill(self.bg_color)
