@@ -5,8 +5,14 @@ import esper
 
 from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.systems.s_bullet_limit import system_bullet_limit
+from src.ecs.systems.s_bullet_rest_pos import system_bullet_rest_pos
+from src.ecs.systems.s_bullet_spawn import system_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_limit import system_player_limit
@@ -36,6 +42,8 @@ class GameEngine:
             self.window_cfg = json.load(window_file)
         with open(path + "player.json", encoding="utf-8") as player_file:
             self.player_cfg = json.load(player_file)
+        with open(path + "bullet.json", encoding="utf-8") as bullet_file:
+            self.bullet_cfg = json.load(bullet_file)
 
     async def run(self) -> None:
         self._create()
@@ -51,6 +59,8 @@ class GameEngine:
     def _create(self):
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
+        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_input_player(self.ecs_world)
 
@@ -67,6 +77,10 @@ class GameEngine:
     def _update(self):
         system_movement(self.ecs_world, self.delta_time)
         system_player_limit(self.ecs_world, self.screen)
+        system_bullet_spawn(self.ecs_world, self.bullet_cfg, self._player_c_t.pos)
+        system_bullet_rest_pos(self.ecs_world)
+        system_bullet_limit(self.ecs_world, self.screen)
+        self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self.bg_color)
@@ -95,5 +109,11 @@ class GameEngine:
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-
-    
+        if c_input.name == "PLAYER_FIRE":
+            bullet_components = self.ecs_world.get_components(CVelocity, CTagBullet)
+            for _, (c_v, c_tb) in bullet_components:
+                c_tb.fired = True
+                vel = pygame.Vector2(0, -1)
+                vel = vel.normalize() * self.bullet_cfg["velocity"]
+                c_v.vel = vel
+            
