@@ -2,6 +2,7 @@
 import esper
 import pygame
 
+from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -40,3 +41,12 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     #ecs_world.add_component(player_entity, CAnimation(player_info["animations"]))
     #ecs_world.add_component(player_entity, CPlayerState())
     return player_entity
+
+def create_input_player(ecs_world:esper.World):
+    input_left = ecs_world.create_entity()
+    input_right = ecs_world.create_entity()
+    #input_p = ecs_world.create_entity()
+
+    ecs_world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
+    ecs_world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
+    #ecs_world.add_component(input_p, CInputCommand("PLAYER_PAUSE", [pygame.K_p]))
