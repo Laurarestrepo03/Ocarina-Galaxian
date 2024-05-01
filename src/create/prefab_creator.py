@@ -37,30 +37,6 @@ def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2,
     ecs_world.add_component(sprite_entity,
                             CSurface.from_surface(surface))
     return sprite_entity
-
-def create_enemy(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
-    enemy_surface = ServiceLocator.images_service.get(enemy_info["image"])  
-    
-    size = enemy_surface.get_size()
-    number_frames = enemy_info["animation"]["number_frames"]
-    size = pygame.Vector2(size[0]/number_frames, size[1])
-    
-    position = pygame.Vector2(position.x - size[0]/2, position.y - size[1]/2)
-    velocity = pygame.Vector2(0, 0)
-
-    enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
-    ecs_world.add_component(enemy_entity, CTagEnemy())
-    ##ServiceLocator.sounds_service.play(enemy_info["sound"])  
-    ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animation"]))
-    
-def create_level(ecs_world:esper.World, level_info, enemies_info):
-    level_entity = ecs_world.create_entity()   
-    line:Line
-    for line in level_info["lines"]:
-        for i in range(0, line["number_enemies"]):
-            position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
-            create_enemy(ecs_world, position, enemies_info[line["enemy_type"]])    
-    
     
 def create_player(ecs_world:esper.World, player_info:dict) -> int:
     player_surface = ServiceLocator.images_service.get(player_info["image"])
@@ -93,3 +69,26 @@ def create_input_player(ecs_world:esper.World):
     ecs_world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
     ecs_world.add_component(input_space, CInputCommand("PLAYER_FIRE", [pygame.K_SPACE]))
     #ecs_world.add_component(input_p, CInputCommand("PLAYER_PAUSE", [pygame.K_p]))
+
+def create_enemy(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
+    enemy_surface = ServiceLocator.images_service.get(enemy_info["image"])  
+    
+    size = enemy_surface.get_size()
+    number_frames = enemy_info["animation"]["number_frames"]
+    size = pygame.Vector2(size[0]/number_frames, size[1])
+    
+    position = pygame.Vector2(position.x - size[0]/2, position.y - size[1]/2)
+    velocity = pygame.Vector2(0, 0)
+
+    enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
+    ecs_world.add_component(enemy_entity, CTagEnemy())
+    ##ServiceLocator.sounds_service.play(enemy_info["sound"])  
+    ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animation"]))
+    
+def create_level(ecs_world:esper.World, level_info, enemies_info):
+    level_entity = ecs_world.create_entity()   
+    line:Line
+    for line in level_info["lines"]:
+        for i in range(0, line["number_enemies"]):
+            position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
+            create_enemy(ecs_world, position, enemies_info[line["enemy_type"]]) 
