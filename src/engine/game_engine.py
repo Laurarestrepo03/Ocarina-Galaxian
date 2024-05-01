@@ -39,9 +39,6 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
 
-        self.level = self.read_json('level_01.json')
-        self.enemies = self.read_json('enemies.json')
-
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
 
@@ -53,6 +50,12 @@ class GameEngine:
             self.player_cfg = json.load(player_file)
         with open(path + "bullet.json", encoding="utf-8") as bullet_file:
             self.bullet_cfg = json.load(bullet_file)
+        with open(path + "level_01.json", encoding="utf-8") as level_file:
+            self.level_cfg = json.load(level_file)
+        with open(path + "enemies.json", encoding="utf-8") as enemies_file:
+            self.enemies_cfg = json.load(enemies_file)
+            
+            
 
     async def run(self) -> None:
         self._create()
@@ -65,14 +68,8 @@ class GameEngine:
             await asyncio.sleep(0)
         self._clean()
 
-    def _create(self):
-        '''create_square(self.ecs_world, 
-                        pygame.Vector2(50, 50),
-                        pygame.Vector2(150, 100),
-                        pygame.Vector2(-100, 200),
-                        pygame.Color(255, 255, 100))'''
-        
-        create_level(self.ecs_world, self.level, self.enemies)
+    def _create(self):       
+        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
@@ -108,12 +105,6 @@ class GameEngine:
 
     def _clean(self):
         pygame.quit()
-        
-    def read_json(self, file):
-        f = open('assets/cfg/' + file, encoding = "utf-8")
-        dictionary = json.loads(f.read())
-        f.close()
-        return dictionary
 
     def _do_action(self, c_input:CInputCommand):
         if c_input.name == "PLAYER_LEFT":
