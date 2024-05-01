@@ -3,7 +3,8 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_square
+from src.create.prefab_creator import create_enemy_square, create_level, create_square
+from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
@@ -27,6 +28,9 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
 
+        self.level = self.read_json('level_01.json')
+        self.enemies = self.read_json('enemies.json')
+
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
 
@@ -46,11 +50,13 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        create_square(self.ecs_world, 
+        '''create_square(self.ecs_world, 
                         pygame.Vector2(50, 50),
                         pygame.Vector2(150, 100),
                         pygame.Vector2(-100, 200),
-                        pygame.Color(255, 255, 100))
+                        pygame.Color(255, 255, 100))'''
+        
+        create_level(self.ecs_world, self.level)
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -62,8 +68,9 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
-        system_movement(self.ecs_world, self.delta_time)
-        system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
+        #system_movement(self.ecs_world, self.delta_time)
+        #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
+        system_enemy_spawner(self.ecs_world, self.enemies)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
@@ -72,5 +79,11 @@ class GameEngine:
 
     def _clean(self):
         pygame.quit()
+        
+    def read_json(self, file):
+        f = open('assets/cfg/' + file, encoding = "utf-8")
+        dictionary = json.loads(f.read())
+        f.close()
+        return dictionary
 
     

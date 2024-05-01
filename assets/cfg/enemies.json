@@ -1,0 +1,30 @@
+{
+    "invaders_enemy_01": {
+        "sound": "assets/snd/asteroid.ogg",
+        "image": "assets/img/invaders_enemy_01.png",
+        "type": "invaders_enemy_01",
+        "velocity_min": 25,
+        "velocity_max": 50
+    },
+    "invaders_enemy_02": {
+        "sound": "assets/snd/asteroid.ogg",
+        "image": "assets/img/invaders_enemy_02.png",
+        "type": "invaders_enemy_02",
+        "velocity_min": 50,
+        "velocity_max": 75
+    },
+    "invaders_enemy_03": {
+        "sound": "assets/snd/asteroid.ogg",
+        "image": "assets/img/invaders_enemy_03.png",
+        "type": "invaders_enemy_03",
+        "velocity_min": 75,
+        "velocity_max": 100
+    },
+    "invaders_enemy_04": {
+        "sound": "assets/snd/asteroid.ogg",
+        "image": "assets/img/invaders_enemy_04.png",
+        "type": "invaders_enemy_04",
+        "velocity_min": 100,
+        "velocity_max": 125
+    }
+}
