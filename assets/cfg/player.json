@@ -1,0 +1,8 @@
+{
+    "image": "assets/img/invaders_char.png",
+    "spawn_point": {
+        "x": 128,
+        "y": 220
+    },
+    "input_velocity": 100
+}
