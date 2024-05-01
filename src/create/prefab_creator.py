@@ -3,7 +3,7 @@ import esper
 import pygame
 
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_enemy_spawner import CEnemySpawner
+from src.ecs.components.c_enemy_spawner import CEnemySpawner, Line
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -46,6 +46,12 @@ def create_enemy(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict
     ##ServiceLocator.sounds_service.play(enemy_info["sound"])  
     ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animation"]))
     
-def create_level(ecs_world:esper.World, level):
-    level_entity = ecs_world.create_entity()
-    ecs_world.add_component(level_entity, CEnemySpawner(level))
+def create_level(ecs_world:esper.World, level_info, enemies_info):
+    level_entity = ecs_world.create_entity()   
+    line:Line
+    for line in level_info["lines"]:
+        for i in range(0, line["number_enemies"]):
+            position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
+            create_enemy(ecs_world, position, enemies_info[line["enemy_type"]])    
+    
+    

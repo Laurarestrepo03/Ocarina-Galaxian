@@ -13,8 +13,3 @@ class Line:
         self.position = line["position"]
         self.number_enemies = line["number_enemies"]
         self.gap = line["gap"]
-
-'''class Enemy:
-    def __init__(self, event:dict) -> None:
-        self.enemy_type:str = event["enemy_type"]
-        self.position:pygame.Vector2 = pygame.Vector2(event["position"]["x"], event["position"]["y"])'''

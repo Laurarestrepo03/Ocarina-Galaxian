@@ -9,7 +9,7 @@
             "name": "MOVE",
             "start": 0,
             "end": 5,
-            "framerate": 10
+            "framerate": 3
             }
     },
     "invaders_enemy_02": {
@@ -22,7 +22,7 @@
             "name": "MOVE",
             "start": 0,
             "end": 5,
-            "framerate": 10
+            "framerate": 3
             }
     },
     "invaders_enemy_03": {
@@ -35,7 +35,7 @@
             "name": "MOVE",
             "start": 0,
             "end": 5,
-            "framerate": 10
+            "framerate": 3
             }
     },
     "invaders_enemy_04": {
