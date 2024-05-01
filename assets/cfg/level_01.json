@@ -1,39 +1,59 @@
 {
-    "enemies": [
+    "lines": [
         {
+
             "enemy_type": "invaders_enemy_04",
             "position": {
-                "x": 94,
-                "y": 38
-            }
-        },
-        {
-            "enemy_type": "invaders_enemy_04",
-            "position": {
-                "x": 147,
-                "y": 38
-            }
+                "x": 101,
+                "y": 46
+            },
+            "number_enemies": 2,
+            "gap": 54
         },
         {
             "enemy_type": "invaders_enemy_03",
             "position": {
-                "x": 79,
-                "y": 54
-            }
+                "x": 83,
+                "y": 60
+            },
+            "number_enemies": 6,
+            "gap": 18
         },
         {
             "enemy_type": "invaders_enemy_02",
             "position": {
-                "x": 93,
-                "y": 70
-            }
+                "x": 64,
+                "y": 73
+            },
+            "number_enemies": 8,
+            "gap": 18
         },
         {
             "enemy_type": "invaders_enemy_01",
             "position": {
-                "x": 156,
-                "y": 70
-            }
+                "x": 46,
+                "y": 86
+            },
+            "number_enemies": 10,
+            "gap": 18
+        },
+        {
+            "enemy_type": "invaders_enemy_01",
+            "position": {
+                "x": 46,
+                "y": 99
+            },
+            "number_enemies": 10,
+            "gap": 18
+        },
+        {
+            "enemy_type": "invaders_enemy_01",
+            "position": {
+                "x": 46,
+                "y": 112
+            },
+            "number_enemies": 10,
+            "gap": 18
         }
     ]
 }

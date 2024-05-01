@@ -1,0 +1,85 @@
+{
+    "enemies": [
+        {
+            "enemy_type": "invaders_enemy_04",
+            "position": {
+                "x": 94,
+                "y": 38
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_04",
+            "position": {
+                "x": 121,
+                "y": 38
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_04",
+            "position": {
+                "x": 147,
+                "y": 38
+            }
+        },
+
+
+
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 79,
+                "y": 54
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 94,
+                "y": 54
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 115,
+                "y": 54
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 133,
+                "y": 54
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 151,
+                "y": 54
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_03",
+            "position": {
+                "x": 163,
+                "y": 54
+            }
+        },
+        
+        {
+            "enemy_type": "invaders_enemy_02",
+            "position": {
+                "x": 93,
+                "y": 70
+            }
+        },
+        {
+            "enemy_type": "invaders_enemy_01",
+            "position": {
+                "x": 156,
+                "y": 70
+            }
+        }
+    ]
+}

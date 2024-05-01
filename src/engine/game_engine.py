@@ -3,8 +3,10 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_enemy_square, create_level, create_square
+from src.create.prefab_creator import create_enemy, create_level, create_square
+from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
+from src.ecs.systems.s_hunter_state import system_enemies_state
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
@@ -57,6 +59,7 @@ class GameEngine:
                         pygame.Color(255, 255, 100))'''
         
         create_level(self.ecs_world, self.level)
+        system_enemy_spawner(self.ecs_world, self.enemies)
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -70,7 +73,9 @@ class GameEngine:
     def _update(self):
         #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
-        system_enemy_spawner(self.ecs_world, self.enemies)
+        #system_enemy_spawner(self.ecs_world, self.enemies)
+        system_animation(self.ecs_world, self.delta_time)
+   #     system_enemies_state(self.ecs_world)
 
     def _draw(self):
         self.screen.fill(self.bg_color)

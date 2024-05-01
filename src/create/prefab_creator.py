@@ -2,6 +2,7 @@
 import esper
 import pygame
 
+from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -30,23 +31,20 @@ def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2,
                             CSurface.from_surface(surface))
     return sprite_entity
 
-def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
+def create_enemy(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
     enemy_surface = ServiceLocator.images_service.get(enemy_info["image"])  
-    print("type: "+ enemy_info["type"] + " size: " + str(enemy_surface.get_size()))   
-    '''vel_min = enemy_info["velocity_min"]
-    vel_max = enemy_info["velocity_max"]
-
-    if vel_min == vel_max:
-        vel_range = vel_min
-    else:
-        vel_range = random.randrange(vel_min, vel_max)'''
     
+    size = enemy_surface.get_size()
+    number_frames = enemy_info["animation"]["number_frames"]
+    size = pygame.Vector2(size[0]/number_frames, size[1])
+    
+    position = pygame.Vector2(position.x - size[0]/2, position.y - size[1]/2)
     velocity = pygame.Vector2(0, 0)
 
     enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
     ecs_world.add_component(enemy_entity, CTagEnemy())
-    #ecs_world.add_component(enemy_entity, CTagEnemyAsteroid())
     ##ServiceLocator.sounds_service.play(enemy_info["sound"])  
+    ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animation"]))
     
 def create_level(ecs_world:esper.World, level):
     level_entity = ecs_world.create_entity()
