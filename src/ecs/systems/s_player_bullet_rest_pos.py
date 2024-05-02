@@ -3,11 +3,11 @@ import pygame
 
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
-from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 
-def system_bullet_rest_pos(ecs_world:esper.World):
-    bullet_components = ecs_world.get_components(CTransform, CSurface, CTagBullet)
+def system_player_bullet_rest_pos(ecs_world:esper.World):
+    bullet_components = ecs_world.get_components(CTransform, CSurface, CTagPlayerBullet)
     player_components = ecs_world.get_components(CTransform, CSurface, CTagPlayer)
 
     for _, (b_c_t, b_c_s, c_tb) in bullet_components:

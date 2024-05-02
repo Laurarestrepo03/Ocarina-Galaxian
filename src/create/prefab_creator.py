@@ -7,13 +7,15 @@ from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
+from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.engine.service_locator import ServiceLocator
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.engine.service_locator import ServiceLocator
     
@@ -51,15 +53,16 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     #ecs_world.add_component(player_entity, CPlayerState())
     return player_entity
 
-def create_bullet(ecs_world:esper.World, bullet_info:dict, type:int) -> int:
-    size = pygame.Vector2(1, 3)
-    pos = pygame.Vector2(0,0)
-    vel = pygame.Vector2(0,0)
+def create_bullet(ecs_world:esper.World, bullet_info:dict, pos:pygame.Vector2, 
+                  vel:pygame.Vector2, type:str) -> int:
+    size = pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"])
     col = pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"], bullet_info["color"]["b"])
     bullet_entity = create_square(ecs_world, size, pos, vel, col)
-    if type == BulletType.PLAYER:
-        ecs_world.add_component(bullet_entity, CTagBullet(BulletType.PLAYER))
-    #TODO: enemy bullet
+    if type == "PLAYER":
+        ecs_world.add_component(bullet_entity, CTagPlayerBullet())
+    elif type == "ENEMY":
+        ecs_world.add_component(bullet_entity, CTagEnemyBullet())
+    ecs_world.add_component(bullet_entity, CTagBullet())
     #ServiceLocator.sounds_service.play(bullet_info["sound"]) -> TODO: ver si sonido es solo para player bullet
     return bullet_entity
     
@@ -74,7 +77,8 @@ def create_input_player(ecs_world:esper.World):
     ecs_world.add_component(input_space, CInputCommand("PLAYER_FIRE", [pygame.K_SPACE]))
     #ecs_world.add_component(input_p, CInputCommand("PLAYER_PAUSE", [pygame.K_p]))
 
-def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int, enemy_info:dict):
+def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,
+                  enemy_info:dict, type:str):
     enemy_surface = ServiceLocator.images_service.get(enemy_info["image"])  
     
     size = enemy_surface.get_size()
@@ -85,7 +89,7 @@ def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int, e
     velocity = pygame.Vector2(velocity, 0)
 
     enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
-    ecs_world.add_component(enemy_entity, CTagEnemy())
+    ecs_world.add_component(enemy_entity, CTagEnemy(type))
     ##ServiceLocator.sounds_service.play(enemy_info["sound"])  
     ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animation"]))
     
@@ -97,4 +101,4 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
     for line in level_info["lines"]:
         for i in range(0, line["number_enemies"]):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
-            create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]]) 
+            create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 

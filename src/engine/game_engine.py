@@ -3,19 +3,19 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_enemy, create_level, create_square
+from src.create.prefab_creator import create_level
+from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
-from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
-from src.ecs.systems.s_bullet_rest_pos import system_bullet_rest_pos
+from src.ecs.systems.s_player_bullet_rest_pos import system_player_bullet_rest_pos
 from src.ecs.systems.s_player_bullet_spawn import system_player_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
@@ -51,13 +51,13 @@ class GameEngine:
             self.player_cfg = json.load(player_file)
         with open(path + "player_bullet.json", encoding="utf-8") as player_bullet_file:
             self.player_bullet_cfg = json.load(player_bullet_file)
+        with open(path + "enemy_bullet.json", encoding="utf-8") as enemy_bullet_file:
+            self.enemy_bullet_cfg = json.load(enemy_bullet_file)
         with open(path + "level_01.json", encoding="utf-8") as level_file:
             self.level_cfg = json.load(level_file)
         with open(path + "enemies.json", encoding="utf-8") as enemies_file:
             self.enemies_cfg = json.load(enemies_file)
             
-            
-
     async def run(self) -> None:
         self._create()
         self.is_running = True
@@ -95,9 +95,10 @@ class GameEngine:
         system_movement(self.ecs_world, self.delta_time)
         system_player_limit(self.ecs_world, self.screen)
         system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
-        system_bullet_rest_pos(self.ecs_world)
+        system_player_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
+        system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
@@ -128,7 +129,7 @@ class GameEngine:
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_FIRE":
-            bullet_components = self.ecs_world.get_components(CVelocity, CTagBullet)
+            bullet_components = self.ecs_world.get_components(CVelocity, CTagPlayerBullet)
             for _, (c_v, c_tb) in bullet_components:
                 c_tb.fired = True
                 vel = pygame.Vector2(0, -1)
