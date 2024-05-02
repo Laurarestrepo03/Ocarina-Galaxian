@@ -16,7 +16,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
 from src.ecs.systems.s_bullet_rest_pos import system_bullet_rest_pos
-from src.ecs.systems.s_bullet_spawn import system_bullet_spawn
+from src.ecs.systems.s_player_bullet_spawn import system_player_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_limit import system_player_limit
@@ -49,8 +49,8 @@ class GameEngine:
             self.window_cfg = json.load(window_file)
         with open(path + "player.json", encoding="utf-8") as player_file:
             self.player_cfg = json.load(player_file)
-        with open(path + "bullet.json", encoding="utf-8") as bullet_file:
-            self.bullet_cfg = json.load(bullet_file)
+        with open(path + "player_bullet.json", encoding="utf-8") as player_bullet_file:
+            self.player_bullet_cfg = json.load(player_bullet_file)
         with open(path + "level_01.json", encoding="utf-8") as level_file:
             self.level_cfg = json.load(level_file)
         with open(path + "enemies.json", encoding="utf-8") as enemies_file:
@@ -94,7 +94,7 @@ class GameEngine:
         system_animation(self.ecs_world, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_player_limit(self.ecs_world, self.screen)
-        system_bullet_spawn(self.ecs_world, self.bullet_cfg)
+        system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
         system_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
@@ -132,6 +132,6 @@ class GameEngine:
             for _, (c_v, c_tb) in bullet_components:
                 c_tb.fired = True
                 vel = pygame.Vector2(0, -1)
-                vel = vel.normalize() * self.bullet_cfg["velocity"]
+                vel = vel.normalize() * self.player_bullet_cfg["velocity"]
                 c_v.vel = vel
             

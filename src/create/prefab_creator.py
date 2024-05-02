@@ -13,7 +13,7 @@ from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.engine.service_locator import ServiceLocator
     
@@ -51,16 +51,18 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     #ecs_world.add_component(player_entity, CPlayerState())
     return player_entity
 
-def create_bullet(ecs_world:esper.World, bullet_info:dict) -> int:
+def create_bullet(ecs_world:esper.World, bullet_info:dict, type:int) -> int:
     size = pygame.Vector2(1, 3)
     pos = pygame.Vector2(0,0)
     vel = pygame.Vector2(0,0)
     col = pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"], bullet_info["color"]["b"])
     bullet_entity = create_square(ecs_world, size, pos, vel, col)
-    ecs_world.add_component(bullet_entity, CTagBullet())
+    if type == BulletType.PLAYER:
+        ecs_world.add_component(bullet_entity, CTagBullet(BulletType.PLAYER))
+    #TODO: enemy bullet
+    #ServiceLocator.sounds_service.play(bullet_info["sound"]) -> TODO: ver si sonido es solo para player bullet
     return bullet_entity
-    #ServiceLocator.sounds_service.play(bullet_info["sound"])
-
+    
 def create_input_player(ecs_world:esper.World):
     input_left = ecs_world.create_entity()
     input_right = ecs_world.create_entity()
