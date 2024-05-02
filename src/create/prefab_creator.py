@@ -78,7 +78,7 @@ def create_enemy(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict
     size = pygame.Vector2(size[0]/number_frames, size[1])
     
     position = pygame.Vector2(position.x - size[0]/2, position.y - size[1]/2)
-    velocity = pygame.Vector2(0, 0)
+    velocity = pygame.Vector2(-10, 0)
 
     enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
     ecs_world.add_component(enemy_entity, CTagEnemy())
