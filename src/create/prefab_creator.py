@@ -74,7 +74,7 @@ def create_input_player(ecs_world:esper.World):
 
     ecs_world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
     ecs_world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
-    ecs_world.add_component(input_space, CInputCommand("PLAYER_FIRE", [pygame.K_SPACE]))
+    ecs_world.add_component(input_space, CInputCommand("PLAYER_FIRE", [pygame.K_SPACE, pygame.K_z]))
     #ecs_world.add_component(input_p, CInputCommand("PLAYER_PAUSE", [pygame.K_p]))
 
 def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,
