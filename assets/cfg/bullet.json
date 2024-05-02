@@ -1,4 +1,8 @@
 {
-    "image": "assets/img/bullet.png",
+    "color": {
+        "r": 255,
+        "g": 158,
+        "b": 56
+    },
     "velocity": 300
 }

@@ -94,7 +94,7 @@ class GameEngine:
         system_animation(self.ecs_world, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_player_limit(self.ecs_world, self.screen)
-        system_bullet_spawn(self.ecs_world, self.bullet_cfg, self._player_c_t.pos)
+        system_bullet_spawn(self.ecs_world, self.bullet_cfg)
         system_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_enemy_movement(self.ecs_world, self.delta_time, self.screen)

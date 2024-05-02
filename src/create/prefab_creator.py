@@ -3,22 +3,12 @@ import esper
 import pygame
 
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_enemy_spawner import CEnemySpawner, Line
+from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.engine.service_locator import ServiceLocator
-
-def create_square(ecs_world:esper.World, size:pygame.Vector2,
-                    pos:pygame.Vector2, vel:pygame.Vector2, col:pygame.Color):
-    cuad_entity = ecs_world.create_entity()
-    ecs_world.add_component(cuad_entity,
-                CSurface(size, col))
-    ecs_world.add_component(cuad_entity,
-                CTransform(pos))
-    ecs_world.add_component(cuad_entity, 
-                CVelocity(vel))
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -27,6 +17,17 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.engine.service_locator import ServiceLocator
     
+def create_square(ecs_world:esper.World, size:pygame.Vector2,
+                   pos:pygame.Vector2, vel:pygame.Vector2, col:pygame.Color) -> int:
+    cuad_entity = ecs_world.create_entity()
+    ecs_world.add_component(cuad_entity,
+                                    CSurface(size, col))
+    ecs_world.add_component(cuad_entity,
+                                    CTransform(pos))
+    ecs_world.add_component(cuad_entity,
+                                    CVelocity(vel))
+    return cuad_entity
+
 def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2, 
                   surface:pygame.Vector2) -> int:
     sprite_entity = ecs_world.create_entity()
@@ -50,11 +51,12 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     #ecs_world.add_component(player_entity, CPlayerState())
     return player_entity
 
-def create_bullet(ecs_world:esper.World, bullet_info:dict, player_pos:pygame.Vector2) -> int:
-    bullet_surface = ServiceLocator.images_service.get(bullet_info["image"])
+def create_bullet(ecs_world:esper.World, bullet_info:dict) -> int:
+    size = pygame.Vector2(1, 3)
     pos = pygame.Vector2(0,0)
     vel = pygame.Vector2(0,0)
-    bullet_entity = create_sprite(ecs_world, pos, vel, bullet_surface)
+    col = pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"], bullet_info["color"]["b"])
+    bullet_entity = create_square(ecs_world, size, pos, vel, col)
     ecs_world.add_component(bullet_entity, CTagBullet())
     return bullet_entity
     #ServiceLocator.sounds_service.play(bullet_info["sound"])
