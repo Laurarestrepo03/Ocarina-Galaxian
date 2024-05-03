@@ -8,9 +8,9 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 def system_bullet_limit(ecs_world:esper.World, screen:pygame.Surface):
     
     screen_rect = screen.get_rect()
-    components = ecs_world.get_components(CTransform, CSurface, CTagBullet)
+    player_bullet_components = ecs_world.get_components(CTransform, CSurface, CTagBullet)
 
-    for bullet_entity, (c_t, c_s, _) in components:
+    for bullet_entity, (c_t, c_s, _) in player_bullet_components:
         bullet_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
         if not screen_rect.contains(bullet_rect):
             ecs_world.delete_entity(bullet_entity)

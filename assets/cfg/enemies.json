@@ -10,7 +10,8 @@
             "start": 0,
             "end": 5,
             "framerate": 3
-            }
+        },
+        "bullet_count": 2
     },
     "invaders_enemy_02": {
         "image": "assets/img/invaders_enemy_02.png",
@@ -23,7 +24,8 @@
             "start": 0,
             "end": 5,
             "framerate": 3
-            }
+        },
+        "bullet_count": 2
     },
     "invaders_enemy_03": {
         "image": "assets/img/invaders_enemy_03.png",
@@ -35,8 +37,9 @@
             "name": "MOVE",
             "start": 0,
             "end": 5,
-            "framerate": 3
-            }
+            "framerate": 2
+        },
+        "bullet_count": 2
     },
     "invaders_enemy_04": {
         "image": "assets/img/invaders_enemy_04.png",
@@ -49,6 +52,7 @@
             "start": 0,
             "end": 0,
             "framerate": 10
-            }
+        },
+        "bullet_count": 2
     }
 }
