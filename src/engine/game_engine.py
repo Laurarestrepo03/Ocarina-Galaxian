@@ -87,12 +87,6 @@ class GameEngine:
         system_bullet_limit(self.ecs_world, self.screen)
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
         self.ecs_world._clear_dead_entities()
-        
-    def system_draw_stars(ecs_world: esper.World, screen):
-        star_entities = ecs_world.get_component(CStarField)
-        for entity, star_field in star_entities:
-            c_transform = ecs_world.component_for_entity(entity, CTransform)
-            screen.blit(star_field.star_surface, c_transform.pos)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
