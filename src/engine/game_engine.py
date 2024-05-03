@@ -7,6 +7,7 @@ from src.create.prefab_creator import create_input_player, create_player, create
 from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_draw_stars import system_draw_stars
 from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
@@ -16,6 +17,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
+from src.ecs.systems.s_explosion_state import system_explosion_state
 from src.ecs.systems.s_player_bullet_rest_pos import system_player_bullet_rest_pos
 from src.ecs.systems.s_player_bullet_spawn import system_player_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
@@ -63,6 +65,8 @@ class GameEngine:
             self.level_cfg = json.load(level_file)
         with open(path + "enemies.json", encoding="utf-8") as enemies_file:
             self.enemies_cfg = json.load(enemies_file)
+        with open(path + "enemy_explosion.json", encoding="utf-8") as enemy_explosion_file:
+            self.enemy_explosion_cfg = json.load(enemy_explosion_file)
             
     async def run(self) -> None:
         self._create()

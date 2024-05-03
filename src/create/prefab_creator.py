@@ -5,6 +5,7 @@ import pygame
 
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemy_spawner import Line
+from src.ecs.components.c_explosion_state import CExplosionState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -70,7 +71,6 @@ def create_bullet(ecs_world:esper.World, bullet_info:dict, pos:pygame.Vector2,
     elif type == "ENEMY":
         ecs_world.add_component(bullet_entity, CTagEnemyBullet())
     ecs_world.add_component(bullet_entity, CTagBullet())
-    #ServiceLocator.sounds_service.play(bullet_info["sound"]) -> TODO: ver si sonido es solo para player bullet
     return bullet_entity
     
 def create_input_player(ecs_world:esper.World):
@@ -122,3 +122,15 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
         for i in range(0, line["number_enemies"]):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
+
+def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, size:pygame.Vector2, explosion_info:dict):
+    explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
+    size = explosion_surface.get_size()
+    size = (size[0] / explosion_info["animations"]["number_frames"], size[1])
+    pos = pygame.Vector2(pos.x + (size[0] / 2) - (size[0] / 2), 
+                         pos.y + (size[1] / 2) - (size[1] / 2))
+    vel = pygame.Vector2(0,0)
+    explosion_entity = create_sprite(ecs_world, pos, vel, explosion_surface)
+    ecs_world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
+    ecs_world.add_component(explosion_entity, CExplosionState())
+    ServiceLocator.sounds_service.play(explosion_info["sound"])
