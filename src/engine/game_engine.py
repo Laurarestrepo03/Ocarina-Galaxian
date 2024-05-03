@@ -4,6 +4,11 @@ import pygame
 import esper
 
 from src.create.prefab_creator import create_input_player, create_player, create_star
+from src.create.prefab_creator import create_enemy, create_level, create_square
+from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_enemy_movement import system_enemy_movement
+from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
+from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_star_field import CStarField
 from src.ecs.components.c_surface import CSurface
@@ -38,6 +43,9 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
 
+        # Original framerate = 0
+        # Original bg_color (0, 200, 128)
+
     def _load_config_files(self):
         path = 'assets/cfg/'
         with open(path + "window.json", encoding="utf-8") as window_file:
@@ -48,6 +56,10 @@ class GameEngine:
             self.bullet_cfg = json.load(bullet_file)
         with open(path + "starfield.json", encoding="utf-8") as starfield_file:
             self.starfield_cfg = json.load(starfield_file)
+        with open(path + "level_01.json", encoding="utf-8") as level_file:
+            self.level_cfg = json.load(level_file)
+        with open(path + "enemies.json", encoding="utf-8") as enemies_file:
+            self.enemies_cfg = json.load(enemies_file)
 
     async def run(self) -> None:
         self._create()
@@ -60,7 +72,8 @@ class GameEngine:
             await asyncio.sleep(0)
         self._clean()
 
-    def _create(self):
+    def _create(self):       
+        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
@@ -80,12 +93,16 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
+        #system_movement(self.ecs_world, self.delta_time)
+        #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
+        system_animation(self.ecs_world, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_player_limit(self.ecs_world, self.screen)
         system_bullet_spawn(self.ecs_world, self.bullet_cfg, self._player_c_t.pos)
         system_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
+        system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
