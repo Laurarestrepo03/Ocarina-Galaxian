@@ -9,21 +9,25 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy, FiringState
 
 def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cfg: dict, delta_time:float):
     components = ecs_world.get_components(CTransform, CTagEnemy)
-    firing_enemy = -1
+    firing_enemy = None
     non_fired_entities = []
+    fired_entities = []
 
     for enemy_entity, (_, c_te) in components:
         if c_te.firing_state == FiringState.FIRING:
             firing_enemy = enemy_entity
+            break
         elif c_te.firing_state == FiringState.NOT_FIRED:
             non_fired_entities.append(enemy_entity)
+        elif c_te.firing_state == FiringState.FIRED:
+            fired_entities.append(enemy_entity)
 
-    if len(non_fired_entities) == 0:
+    if len(fired_entities) == len(components):
         for enemy_entity, (_, c_te) in components:
             c_te.firing_state = FiringState.NOT_FIRED
-            non_fired_entities.append(enemy_entity)
+        non_fired_entities = fired_entities
 
-    if firing_enemy > -1:
+    if firing_enemy:
         c_te = ecs_world.component_for_entity(firing_enemy, CTagEnemy)
         c_te.timer += delta_time
 
@@ -44,7 +48,9 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
             c_te.bullets_fired += 1
 
             if c_te.bullets_fired == enemies_cfg[c_te.type]["bullet_count"]:
-                c_te.firing_state = FiringState.FIRED 
+                
+                c_te.firing_state = FiringState.FIRED
+                c_te.bullets_fired = 0
 
     elif len(non_fired_entities) > 0:
         random_enemy = random.choice(non_fired_entities)

@@ -12,9 +12,7 @@ from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
-from src.ecs.components.c_star_field import CStarField
 from src.ecs.components.c_surface import CSurface
-from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
