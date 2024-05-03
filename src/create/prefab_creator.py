@@ -1,4 +1,5 @@
 
+import random
 import esper
 import pygame
 
@@ -25,11 +26,18 @@ def create_square(ecs_world:esper.World, size:pygame.Vector2,
     ecs_world.add_component(cuad_entity,
                                     CSurface(size, col))
     ecs_world.add_component(cuad_entity,
-                                    CTransform(pos))
-    ecs_world.add_component(cuad_entity,
-                                    CVelocity(vel))
-    return cuad_entity
-
+                CTransform(pos))
+    ecs_world.add_component(cuad_entity, 
+                CVelocity(vel))
+from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.components.c_star_field import CStarField
+from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_transform import CTransform
+from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.engine.service_locator import ServiceLocator
+    
 def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2, 
                   surface:pygame.Vector2) -> int:
     sprite_entity = ecs_world.create_entity()
