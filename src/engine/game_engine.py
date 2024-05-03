@@ -3,8 +3,9 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_input_player, create_player
+from src.create.prefab_creator import create_input_player, create_player, create_star
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_star_field import CStarField
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -17,6 +18,7 @@ from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
+from src.ecs.systems.s_star_field import system_draw_stars, system_star_field
 
 class GameEngine:
     def __init__(self) -> None:
@@ -44,6 +46,8 @@ class GameEngine:
             self.player_cfg = json.load(player_file)
         with open(path + "bullet.json", encoding="utf-8") as bullet_file:
             self.bullet_cfg = json.load(bullet_file)
+        with open(path + "starfield.json", encoding="utf-8") as starfield_file:
+            self.starfield_cfg = json.load(starfield_file)
 
     async def run(self) -> None:
         self._create()
@@ -63,6 +67,7 @@ class GameEngine:
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_input_player(self.ecs_world)
+        create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -80,11 +85,19 @@ class GameEngine:
         system_bullet_spawn(self.ecs_world, self.bullet_cfg, self._player_c_t.pos)
         system_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
+        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
         self.ecs_world._clear_dead_entities()
+        
+    def system_draw_stars(ecs_world: esper.World, screen):
+        star_entities = ecs_world.get_component(CStarField)
+        for entity, star_field in star_entities:
+            c_transform = ecs_world.component_for_entity(entity, CTransform)
+            screen.blit(star_field.star_surface, c_transform.pos)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
         system_rendering(self.ecs_world, self.screen)
+        system_draw_stars(self.ecs_world, self.screen)
         pygame.display.flip()
 
     def _clean(self):
