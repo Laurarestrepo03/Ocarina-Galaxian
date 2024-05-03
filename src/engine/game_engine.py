@@ -98,15 +98,26 @@ class GameEngine:
     def _update(self):
         #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
-        system_animation(self.ecs_world, self.delta_time)
+        
         system_movement(self.ecs_world, self.delta_time)
-        system_player_limit(self.ecs_world, self.screen)
+        system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
+
+        system_explosion_state(self.ecs_world)
+
+       
         system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
         system_player_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
-        system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
+        
         system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
+
+        system_player_limit(self.ecs_world, self.screen)
+       
+        system_collision_bullet_enemy(self.ecs_world, self.enemy_explosion_cfg)
+
+        system_animation(self.ecs_world, self.delta_time)
+
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
