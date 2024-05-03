@@ -27,9 +27,3 @@ def system_star_field(ecs_world:esper.World, window_cfg, delta_time):
                 star_field.star_surface.fill((star_field.star_color))
                 
             star_field.current_blink_time = random.uniform(star_field.blink_rate_min, star_field.blink_rate_max)
-                        
-def system_draw_stars(ecs_world: esper.World, screen):
-    star_entities = ecs_world.get_component(CStarField)
-    for entity, star_field in star_entities:
-        c_transform = ecs_world.component_for_entity(entity, CTransform)
-        screen.blit(star_field.star_surface, c_transform.pos)

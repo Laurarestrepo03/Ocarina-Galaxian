@@ -7,6 +7,7 @@ from src.create.prefab_creator import create_input_player, create_player, create
 from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_draw_stars import system_draw_stars
 from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
@@ -23,7 +24,7 @@ from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
-from src.ecs.systems.s_star_field import system_draw_stars, system_star_field
+from src.ecs.systems.s_star_field import system_star_field
 
 class GameEngine:
     def __init__(self) -> None:
