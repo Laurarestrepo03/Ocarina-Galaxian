@@ -49,8 +49,6 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     vel = pygame.Vector2(0,0)
     player_entity = create_sprite(ecs_world, pos, vel, player_surface)
     ecs_world.add_component(player_entity, CTagPlayer())
-    #ecs_world.add_component(player_entity, CAnimation(player_info["animations"]))
-    #ecs_world.add_component(player_entity, CPlayerState())
     return player_entity
 
 def create_bullet(ecs_world:esper.World, bullet_info:dict, pos:pygame.Vector2, 

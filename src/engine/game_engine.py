@@ -35,6 +35,7 @@ class GameEngine:
         self.is_running = False
         self.framerate = self.window_cfg["framerate"]
         self.delta_time = 0
+        self.current_time = 0
         self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"],
                                      self.window_cfg["bg_color"]["g"],
                                      self.window_cfg["bg_color"]["b"])
@@ -73,7 +74,6 @@ class GameEngine:
         create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_input_player(self.ecs_world)
@@ -81,6 +81,7 @@ class GameEngine:
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
+        self.current_time += self.delta_time # TODO: no sumar cuando está en pausa
     
     def _process_events(self):
         for event in pygame.event.get():
@@ -98,7 +99,7 @@ class GameEngine:
         system_player_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
         system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
-        system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
+        system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
