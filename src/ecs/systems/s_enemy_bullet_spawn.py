@@ -18,6 +18,11 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
         elif c_te.firing_state == FiringState.NOT_FIRED:
             non_fired_entities.append(enemy_entity)
 
+    if len(non_fired_entities) == 0:
+        for enemy_entity, (_, c_te) in components:
+            c_te.firing_state = FiringState.NOT_FIRED
+            non_fired_entities.append(enemy_entity)
+
     if firing_enemy > -1:
         c_te = ecs_world.component_for_entity(firing_enemy, CTagEnemy)
         c_te.timer += delta_time
@@ -46,7 +51,5 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
         c_te = ecs_world.component_for_entity(random_enemy, CTagEnemy)
         c_te.firing_state = FiringState.FIRING
 
-    elif len(non_fired_entities) == 0:
-        for enemy_entity, (_, c_te) in components:
-            c_te.firing_state = FiringState.NOT_FIRED
+    
     
