@@ -11,7 +11,7 @@
             "end": 5,
             "framerate": 3
         },
-        "bullet_count": 1
+        "bullet_count": 2
     },
     "invaders_enemy_02": {
         "image": "assets/img/invaders_enemy_02.png",
@@ -25,7 +25,7 @@
             "end": 5,
             "framerate": 3
         },
-        "bullet_count": 1
+        "bullet_count": 2
     },
     "invaders_enemy_03": {
         "image": "assets/img/invaders_enemy_03.png",
@@ -53,6 +53,6 @@
             "end": 0,
             "framerate": 10
         },
-        "bullet_count": 3
+        "bullet_count": 2
     }
 }
