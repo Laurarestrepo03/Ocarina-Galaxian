@@ -23,6 +23,7 @@ from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_star_field import system_star_field
+from src.engine.service_locator import ServiceLocator
 
 class GameEngine:
     def __init__(self) -> None:
@@ -136,11 +137,14 @@ class GameEngine:
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-        if c_input.name == "PLAYER_FIRE":
+        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START:
             bullet_components = self.ecs_world.get_components(CVelocity, CTagPlayerBullet)
-            for _, (c_v, c_tb) in bullet_components:
+            for _, (c_v, c_tb) in bullet_components:   
+                if not c_tb.fired:
+                    ServiceLocator.sounds_service.play(self.player_bullet_cfg["sound"])
                 c_tb.fired = True
                 vel = pygame.Vector2(0, -1)
                 vel = vel.normalize() * self.player_bullet_cfg["velocity"]
-                c_v.vel = vel
+                c_v.vel = vel 
+            
             
