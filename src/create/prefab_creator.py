@@ -123,12 +123,12 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
 
-def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, size:pygame.Vector2, explosion_info:dict):
+def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pygame.Vector2, explosion_info:dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
     size = explosion_surface.get_size()
     size = (size[0] / explosion_info["animations"]["number_frames"], size[1])
-    pos = pygame.Vector2(pos.x + (size[0] / 2) - (size[0] / 2), 
-                         pos.y + (size[1] / 2) - (size[1] / 2))
+    pos = pygame.Vector2(pos.x + (entity_size[0] / 2) - (size[0] / 2), 
+                         pos.y + (entity_size[1] / 2) - (size[1] / 2))
     vel = pygame.Vector2(0,0)
     explosion_entity = create_sprite(ecs_world, pos, vel, explosion_surface)
     ecs_world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))

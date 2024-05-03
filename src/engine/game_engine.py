@@ -8,6 +8,7 @@ from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
+from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
 from src.ecs.systems.s_draw_stars import system_draw_stars
 from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
@@ -67,6 +68,8 @@ class GameEngine:
             self.enemies_cfg = json.load(enemies_file)
         with open(path + "enemy_explosion.json", encoding="utf-8") as enemy_explosion_file:
             self.enemy_explosion_cfg = json.load(enemy_explosion_file)
+        with open(path + "player_explosion.json", encoding="utf-8") as player_explosion_file:
+            self.player_explosion_cfg = json.load(player_explosion_file)
             
     async def run(self) -> None:
         self._create()
@@ -105,20 +108,20 @@ class GameEngine:
         
         system_movement(self.ecs_world, self.delta_time)
         system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
+        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
 
         system_explosion_state(self.ecs_world)
 
-       
-        system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
-        system_player_bullet_rest_pos(self.ecs_world)
         system_bullet_limit(self.ecs_world, self.screen)
-        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
-        
+        system_player_limit(self.ecs_world, self.screen)
+  
+        system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
         system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
 
-        system_player_limit(self.ecs_world, self.screen)
-       
         system_collision_bullet_enemy(self.ecs_world, self.enemy_explosion_cfg)
+        system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
+
+        system_player_bullet_rest_pos(self.ecs_world)
 
         system_animation(self.ecs_world, self.delta_time)
 
