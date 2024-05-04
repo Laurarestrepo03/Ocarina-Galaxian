@@ -9,5 +9,3 @@ class FontsService:
         if path not in self._fonts:     
             self._fonts[font_key] = pygame.font.Font(path, size)
         return self._fonts[font_key]
-    
-    
