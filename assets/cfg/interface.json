@@ -25,5 +25,16 @@
             "b": 0 
         },
         "size": 8
+    },
+    "ready":{
+        "font": "assets/fnt/PressStart2P.ttf",
+        "sound": "assets/snd/game_start.ogg",
+        "text": "READY",
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255 
+        },
+        "size": 8
     }
 }

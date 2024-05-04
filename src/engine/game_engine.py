@@ -3,7 +3,7 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_input_player, create_pause_text, create_player, create_star
+from src.create.prefab_creator import create_input_player, create_pause_text, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
@@ -48,6 +48,9 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
         self.execute_game = True
+        self.start_game = True
+        self.introduction = True
+        self.ready_entity = None
 
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
@@ -87,13 +90,9 @@ class GameEngine:
         self._clean()
 
     def _create(self):       
-        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
-        self._player_entity = create_player(self.ecs_world, self.player_cfg)
-        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
-        self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
-        create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
+        
+        
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -111,6 +110,30 @@ class GameEngine:
         #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         
+
+        if self.introduction:
+            self.ready_entity = create_text(self.ecs_world, 
+                    self.interface_cfg["ready"]["text"], 
+                    ServiceLocator.fonts_service.get_font(self.interface_cfg["ready"]["font"] ,self.interface_cfg["ready"]["size"]),
+                    pygame.Vector2(self.window_cfg["size"]["w"]/2, 30 + self.window_cfg["size"]["h"]/2),
+                    pygame.Color(self.interface_cfg["ready"]["color"]["r"],
+                                 self.interface_cfg["ready"]["color"]["g"],
+                                 self.interface_cfg["ready"]["color"]["b"]) 
+                    )
+            ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])
+            self.introduction = False
+
+        if self.start_game and 3<= self.current_time:
+            self.ecs_world.delete_entity(self.ready_entity)
+            create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
+            self._player_entity = create_player(self.ecs_world, self.player_cfg)
+            self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+            self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+            self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
+            create_input_player(self.ecs_world)
+            self.start_game = False
+
+
         if self.execute_game:
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
