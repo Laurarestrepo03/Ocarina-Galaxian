@@ -164,7 +164,7 @@ class GameEngine:
         if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START:
             bullet_components = self.ecs_world.get_components(CVelocity, CTagPlayerBullet)
             for _, (c_v, c_tb) in bullet_components:   
-                if not c_tb.fired:
+                if not c_tb.fired and self.execute_game:
                     ServiceLocator.sounds_service.play(self.player_bullet_cfg["sound"])
                 c_tb.fired = True
                 vel = pygame.Vector2(0, -1)
