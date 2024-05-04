@@ -17,6 +17,7 @@
     "high_score_max_value": 1000,
     "pause":{
         "font": "assets/fnt/PressStart2P.ttf",
+        "sound": "assets/snd/game_paused.ogg",
         "text": "PAUSED",
         "color": {
             "r": 255,

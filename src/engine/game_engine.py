@@ -183,6 +183,7 @@ class GameEngine:
                                       font, 
                                       pygame.Vector2(self.window_cfg["size"]["w"]/2, 30 + self.window_cfg["size"]["h"]/2),
                                       pygame.Color(r, g, b))
+                    ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
                     self.execute_game = True
                     system_pause(self.ecs_world)
