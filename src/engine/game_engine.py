@@ -3,7 +3,7 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_input_player, create_player, create_star
+from src.create.prefab_creator import create_input_player, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
@@ -70,6 +70,8 @@ class GameEngine:
             self.enemy_explosion_cfg = json.load(enemy_explosion_file)
         with open(path + "player_explosion.json", encoding="utf-8") as player_explosion_file:
             self.player_explosion_cfg = json.load(player_explosion_file)
+        with open(path + "interface.json", encoding="utf-8") as interface_file:
+            self.interface_cfg = json.load(interface_file)
             
     async def run(self) -> None:
         self._create()
@@ -90,6 +92,11 @@ class GameEngine:
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
+        create_text(self.ecs_world, self.interface_cfg["1up_title"], self.interface_cfg["1up_title"]["text"])
+        create_text(self.ecs_world, self.interface_cfg["1up_value"], self.interface_cfg["1up_value"]["text"])
+        create_text(self.ecs_world, self.interface_cfg["high_score_title"], self.interface_cfg["high_score_title"]["text"])
+        create_text(self.ecs_world, self.interface_cfg["high_score_value"], self.interface_cfg["high_score_value"]["text"])
+
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
