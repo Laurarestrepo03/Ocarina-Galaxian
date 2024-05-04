@@ -1,7 +1,4 @@
-
 import random
-
-import pygame
 
 class CStarField:
     def __init__(self, window_width, window_height, star_surface, blink_rate_min, blink_rate_max, star_color):
