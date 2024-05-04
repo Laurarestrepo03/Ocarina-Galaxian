@@ -12,6 +12,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
+from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.engine.service_locator import ServiceLocator
 from src.ecs.components.c_input_command import CInputCommand
@@ -77,11 +78,13 @@ def create_input_player(ecs_world:esper.World):
     input_left = ecs_world.create_entity()
     input_right = ecs_world.create_entity()
     input_space = ecs_world.create_entity()
+    input_pause = ecs_world.create_entity()
     #input_p = ecs_world.create_entity()
 
     ecs_world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
     ecs_world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
     ecs_world.add_component(input_space, CInputCommand("PLAYER_FIRE", [pygame.K_SPACE, pygame.K_z]))
+    ecs_world.add_component(input_pause, CInputCommand("PAUSE", [pygame.K_p, pygame.K_m]))
     #ecs_world.add_component(input_p, CInputCommand("PLAYER_PAUSE", [pygame.K_p]))
 
 def create_star(ecs_world:esper.World, window_cfg, starfield_cfg):
@@ -134,3 +137,11 @@ def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pyga
     ecs_world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
     ecs_world.add_component(explosion_entity, CExplosionState())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
+
+def create_pause_text(world: esper.World, text: str, font: pygame.Font, pos: pygame.Vector2 ,color: pygame.Color):
+    text_entity = world.create_entity()
+    surface = CSurface.from_text(text,font,color)
+    size = surface.surf.get_size()
+    world.add_component(text_entity, surface)
+    world.add_component(text_entity,CTransform(pygame.Vector2(pos.x - size[0]/2,pos.y - size[1]/2)))   
+    world.add_component(text_entity,CTagPause())  
