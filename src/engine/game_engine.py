@@ -98,7 +98,8 @@ class GameEngine:
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
-        self.current_time += self.delta_time # TODO: no sumar cuando está en pausa
+        if self.execute_game:
+            self.current_time += self.delta_time 
     
     def _process_events(self):
         for event in pygame.event.get():
