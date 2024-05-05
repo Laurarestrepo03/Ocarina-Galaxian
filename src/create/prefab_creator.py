@@ -137,3 +137,18 @@ def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pyga
     ecs_world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
     ecs_world.add_component(explosion_entity, CExplosionState())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
+
+
+
+def create_text(world:esper.World, text_info:dict, text) -> int:
+    text_font = ServiceLocator.fonts_service.get(text_info["font"], text_info["size"])
+    text_pos = (text_info["position"]["x"], text_info["position"]["y"])
+    text_color = (text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])
+    
+    text_surface = text_font.render(text, False, text_color, None)
+    
+    text_entity = world.create_entity()
+    world.add_component(text_entity, CTransform(text_pos))
+    world.add_component(text_entity, CSurface.from_text(text_surface))
+    
+    return text_entity
