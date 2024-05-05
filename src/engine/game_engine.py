@@ -3,7 +3,7 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_input_player, create_player, create_star, create_text
+from src.create.prefab_creator import create_input_player, create_pause_text, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.systems.s_animation import system_animation
@@ -19,6 +19,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
 from src.ecs.systems.s_explosion_state import system_explosion_state
+from src.ecs.systems.s_pause import system_pause
 from src.ecs.systems.s_player_bullet_rest_pos import system_player_bullet_rest_pos
 from src.ecs.systems.s_player_bullet_spawn import system_player_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
@@ -46,6 +47,7 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["g"],
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
+        self.execute_game = True
 
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
@@ -101,7 +103,8 @@ class GameEngine:
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
-        self.current_time += self.delta_time # TODO: no sumar cuando está en pausa
+        if self.execute_game:
+            self.current_time += self.delta_time 
     
     def _process_events(self):
         for event in pygame.event.get():
@@ -113,30 +116,31 @@ class GameEngine:
         #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         
-        system_movement(self.ecs_world, self.delta_time)
-        system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
-        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
+        if self.execute_game:
+            system_movement(self.ecs_world, self.delta_time)
+            system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
+            system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
 
-        system_explosion_state(self.ecs_world)
+            system_explosion_state(self.ecs_world)
 
-        system_bullet_limit(self.ecs_world, self.screen)
-        system_player_limit(self.ecs_world, self.screen)
-  
-        system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
-        system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
+            system_bullet_limit(self.ecs_world, self.screen)
+            system_player_limit(self.ecs_world, self.screen)
+    
+            system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
+            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
 
-        system_collision_bullet_enemy(self.ecs_world, self.enemy_explosion_cfg)
-        system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
+            system_collision_bullet_enemy(self.ecs_world, self.enemy_explosion_cfg)
+            system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
 
-        system_player_bullet_rest_pos(self.ecs_world)
+            system_player_bullet_rest_pos(self.ecs_world)
 
-        system_animation(self.ecs_world, self.delta_time)
+            system_animation(self.ecs_world, self.delta_time)
 
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
+        system_rendering(self.ecs_world, self.screen, self.delta_time)
         system_draw_stars(self.ecs_world, self.screen)
         pygame.display.flip()
 
@@ -162,7 +166,7 @@ class GameEngine:
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START:
+        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
             bullet_components = self.ecs_world.get_components(CVelocity, CTagPlayerBullet)
             for _, (c_v, c_tb) in bullet_components:   
                 if not c_tb.fired:
@@ -170,6 +174,24 @@ class GameEngine:
                 c_tb.fired = True
                 vel = pygame.Vector2(0, -1)
                 vel = vel.normalize() * self.player_bullet_cfg["velocity"]
-                c_v.vel = vel 
-            
+                c_v.vel = vel
+        if c_input.name == "PAUSE":
+            if c_input.phase == CommandPhase.START:
+                if self.execute_game == True:
+                    self.execute_game = False
+                    font = ServiceLocator.fonts_service.get_font(self.interface_cfg["pause"]["font"] ,self.interface_cfg["pause"]["size"])
+                    r = self.interface_cfg["pause"]["color"]["r"]
+                    g = self.interface_cfg["pause"]["color"]["g"]
+                    b = self.interface_cfg["pause"]["color"]["b"]
+                    create_pause_text(self.ecs_world,
+                                      self.interface_cfg["pause"]["text"], 
+                                      font, 
+                                      pygame.Vector2(self.window_cfg["size"]["w"]/2, 30 + self.window_cfg["size"]["h"]/2),
+                                      pygame.Color(r, g, b))
+                    ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
+                else:
+                    self.execute_game = True
+                    system_pause(self.ecs_world)
+
+
             
