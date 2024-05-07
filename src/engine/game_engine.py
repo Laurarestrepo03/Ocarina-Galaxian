@@ -3,9 +3,10 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_input_player, create_pause_text, create_player, create_star
+from src.create.prefab_creator import create_bullet, create_input_player, create_pause_text, create_player, create_star
 from src.create.prefab_creator import create_level
-from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
+from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
+from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
@@ -20,10 +21,9 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
 from src.ecs.systems.s_explosion_state import system_explosion_state
 from src.ecs.systems.s_pause import system_pause
-from src.ecs.systems.s_player_bullet_rest_pos import system_player_bullet_rest_pos
-from src.ecs.systems.s_player_bullet_spawn import system_player_bullet_spawn
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_player_bullet_state import system_player_bullet_state
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_star_field import system_star_field
@@ -92,6 +92,7 @@ class GameEngine:
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
+        create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
         create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
 
@@ -121,13 +122,12 @@ class GameEngine:
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
     
-            system_player_bullet_spawn(self.ecs_world, self.player_bullet_cfg)
             system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
 
             system_collision_bullet_enemy(self.ecs_world, self.enemy_explosion_cfg)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
 
-            system_player_bullet_rest_pos(self.ecs_world)
+            system_player_bullet_state(self.ecs_world)
 
             system_animation(self.ecs_world, self.delta_time)
 
@@ -162,11 +162,11 @@ class GameEngine:
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
-            bullet_components = self.ecs_world.get_components(CVelocity, CTagPlayerBullet)
-            for _, (c_v, c_tb) in bullet_components:   
-                if not c_tb.fired:
+            bullet_components = self.ecs_world.get_components(CVelocity, CPLayerBulletState)
+            for _, (c_v, c_pbs) in bullet_components:   
+                if not c_pbs.state == PlayerBulletState.FIRED:
                     ServiceLocator.sounds_service.play(self.player_bullet_cfg["sound"])
-                c_tb.fired = True
+                c_pbs.state = PlayerBulletState.FIRED
                 vel = pygame.Vector2(0, -1)
                 vel = vel.normalize() * self.player_bullet_cfg["velocity"]
                 c_v.vel = vel

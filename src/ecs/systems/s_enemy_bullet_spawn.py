@@ -5,6 +5,7 @@ import random
 from src.create.prefab_creator import create_bullet
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
+from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy, FiringState
 
 def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cfg: dict, delta_time:float):
@@ -42,7 +43,7 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
             vel = pygame.Vector2(0, 1)
             vel = vel.normalize() * bullet_cfg["velocity"]
 
-            create_bullet(ecs_world, bullet_cfg, final_pos, vel, "ENEMY")
+            create_bullet(ecs_world, bullet_cfg, final_pos, vel, BulletType.ENEMY)
 
             c_te.timer = 0
             c_te.bullets_fired += 1
