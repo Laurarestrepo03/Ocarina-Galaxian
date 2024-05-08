@@ -6,14 +6,13 @@ import pygame
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_explosion_state import CExplosionState
+from src.ecs.components.c_player_bullet_state import CPLayerBulletState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
-from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_pause import CTagPause
-from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.engine.service_locator import ServiceLocator
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
@@ -63,15 +62,15 @@ def create_player(ecs_world:esper.World, player_info:dict) -> int:
     return player_entity
 
 def create_bullet(ecs_world:esper.World, bullet_info:dict, pos:pygame.Vector2, 
-                  vel:pygame.Vector2, type:str) -> int:
+                  vel:pygame.Vector2, type:int) -> int:
     size = pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"])
     col = pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"], bullet_info["color"]["b"])
     bullet_entity = create_square(ecs_world, size, pos, vel, col)
-    if type == "PLAYER":
-        ecs_world.add_component(bullet_entity, CTagPlayerBullet())
-    elif type == "ENEMY":
-        ecs_world.add_component(bullet_entity, CTagEnemyBullet())
-    ecs_world.add_component(bullet_entity, CTagBullet())
+    if type == BulletType.PLAYER:
+        ecs_world.add_component(bullet_entity, CPLayerBulletState())
+        ecs_world.add_component(bullet_entity, CTagBullet(BulletType.PLAYER))
+    elif type == BulletType.ENEMY:
+        ecs_world.add_component(bullet_entity, CTagBullet(BulletType.ENEMY))
     return bullet_entity
     
 def create_input_player(ecs_world:esper.World):
