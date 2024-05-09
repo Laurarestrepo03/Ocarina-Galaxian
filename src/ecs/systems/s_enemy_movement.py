@@ -21,6 +21,5 @@ def system_enemy_movement(world:esper.World, delta_time:float, screen:pygame.Sur
 
     for _, (c_t, c_v, c_s, c_e) in components:
         c_v.vel.x *= direction
-        c_t.pos.x += c_v.vel.x * delta_time
 
  
