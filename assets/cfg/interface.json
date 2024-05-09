@@ -62,6 +62,10 @@
         "font": "assets/fnt/PressStart2P.ttf",
         "sound": "assets/snd/game_paused.ogg",
         "text": "PAUSED",
+        "position":{
+            "x":115,
+            "y":24
+        },
         "color": {
             "r": 255,
             "g": 0,

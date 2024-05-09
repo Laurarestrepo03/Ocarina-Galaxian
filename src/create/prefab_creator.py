@@ -145,12 +145,17 @@ def create_pause_text(world: esper.World, text: str, font: pygame.font, pos: pyg
     world.add_component(text_entity,CTransform(pygame.Vector2(pos.x - size[0]/2,pos.y - size[1]/2)))   
     world.add_component(text_entity,CTagPause())  
 
-def create_text(world:esper.World, text_info:dict, text) -> int:
-    text_font = ServiceLocator.fonts_service.get_font(text_info["font"], text_info["size"])
-    text_pos = (text_info["position"]["x"], text_info["position"]["y"])
-    text_color = (text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])
+def create_text(world:esper.World, text_info:dict, text=None) -> int:
+    if text is None:
+        text = text_info["text"]
     
-    text_surface = text_font.render(text, False, text_color, None)
+    text_font = ServiceLocator.fonts_service.get_font(text_info["font"], text_info["size"])
+    text_color = pygame.Vector3(text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])    
+    surface = CSurface.from_text(text,text_font,text_color)
+    text_size = surface.surf.get_size()
+    
+    text_pos = pygame.Vector2(text_info["position"]["x"] - text_size[0]/2, text_info["position"]["y"] - text_size[1]/2)
+    
     
     text_entity = world.create_entity()
     world.add_component(text_entity, CTransform(text_pos))

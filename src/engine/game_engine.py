@@ -177,15 +177,7 @@ class GameEngine:
             if c_input.phase == CommandPhase.START:
                 if self.execute_game == True:
                     self.execute_game = False
-                    font = ServiceLocator.fonts_service.get_font(self.interface_cfg["pause"]["font"] ,self.interface_cfg["pause"]["size"])
-                    r = self.interface_cfg["pause"]["color"]["r"]
-                    g = self.interface_cfg["pause"]["color"]["g"]
-                    b = self.interface_cfg["pause"]["color"]["b"]
-                    create_pause_text(self.ecs_world,
-                                      self.interface_cfg["pause"]["text"], 
-                                      font, 
-                                      pygame.Vector2(self.window_cfg["size"]["w"]/2, 30 + self.window_cfg["size"]["h"]/2),
-                                      pygame.Color(r, g, b))
+                    create_text(self.ecs_world, self.interface_cfg["pause"])
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
                     self.execute_game = True
