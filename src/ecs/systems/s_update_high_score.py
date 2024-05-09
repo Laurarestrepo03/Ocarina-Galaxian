@@ -3,7 +3,6 @@ import json
 import os
 
 from src.create.prefab_creator import create_text
-from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_surface import CSurface
 
 def system_update_high_score(world:esper.World, interface_cfg:dict, self):        
