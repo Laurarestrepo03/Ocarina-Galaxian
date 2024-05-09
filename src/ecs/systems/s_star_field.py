@@ -21,8 +21,8 @@ def system_star_field(ecs_world:esper.World, window_cfg, delta_time):
             star_field.star_visible = not star_field.star_visible
             
             if star_field.star_visible:
-                star_field.star_surface.fill((window_cfg["bg_color"]["r"], window_cfg["bg_color"]["g"], window_cfg["bg_color"]["b"]))
-            else:
                 star_field.star_surface.fill((star_field.star_color))
+            else:
+                star_field.star_surface.fill((window_cfg["bg_color"]["r"], window_cfg["bg_color"]["g"], window_cfg["bg_color"]["b"]))
                 
             star_field.current_blink_time = random.uniform(star_field.blink_rate_min, star_field.blink_rate_max)
