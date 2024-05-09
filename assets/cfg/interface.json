@@ -63,8 +63,8 @@
         "sound": "assets/snd/game_paused.ogg",
         "text": "PAUSED",
         "position":{
-            "x":115,
-            "y":24
+            "x":128,
+            "y":154
         },
         "color": {
             "r": 255,
