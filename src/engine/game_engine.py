@@ -7,6 +7,7 @@ from src.create.prefab_creator import create_bullet, create_input_player, create
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
 from src.ecs.components.tags.c_tag_bullet import BulletType
+from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
 from src.ecs.systems.s_draw_stars import system_draw_stars
@@ -26,6 +27,8 @@ from src.ecs.systems.s_player_bullet_state import system_player_bullet_state
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_star_field import system_star_field
+from src.ecs.systems.s_update_high_score import system_update_high_score
+from src.ecs.systems.s_update_score import system_update_score
 from src.engine.service_locator import ServiceLocator
 
 class GameEngine:
@@ -48,6 +51,9 @@ class GameEngine:
         self.ecs_world = esper.World()
         self.execute_game = True
 
+        self.high_score = int(self.interface_cfg["high_score_value"]["text"])
+        self.score = 0
+        self.enemy_destroyed = None
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
 
@@ -94,10 +100,10 @@ class GameEngine:
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
         create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
-        create_text(self.ecs_world, self.interface_cfg["1up_title"], self.interface_cfg["1up_title"]["text"])
-        create_text(self.ecs_world, self.interface_cfg["1up_value"], self.interface_cfg["1up_value"]["text"])
-        create_text(self.ecs_world, self.interface_cfg["high_score_title"], self.interface_cfg["high_score_title"]["text"])
-        create_text(self.ecs_world, self.interface_cfg["high_score_value"], self.interface_cfg["high_score_value"]["text"])
+        create_text(self.ecs_world, self.interface_cfg["1up_title"])
+        self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
+        create_text(self.ecs_world, self.interface_cfg["high_score_title"])
+        self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))
 
 
     def _calculate_time(self):
@@ -130,10 +136,13 @@ class GameEngine:
 
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
 
-            system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg)
+            system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self)
 
             system_animation(self.ecs_world, self.delta_time)
-
+            
+            system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
+            system_update_high_score(self.ecs_world,self.interface_cfg, self)
+            
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
@@ -177,7 +186,8 @@ class GameEngine:
             if c_input.phase == CommandPhase.START:
                 if self.execute_game == True:
                     self.execute_game = False
-                    create_text(self.ecs_world, self.interface_cfg["pause"])
+                    pause_text_entity = create_text(self.ecs_world, self.interface_cfg["pause"])
+                    self.ecs_world.add_component(pause_text_entity, CTagPause())
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
                     self.execute_game = True

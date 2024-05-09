@@ -6,6 +6,7 @@ import pygame
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_explosion_state import CExplosionState
+from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -120,10 +121,13 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
     velocity = level_info["velocity"]
+    enemies_count = 0
     for line in level_info["lines"]:
         for i in range(0, line["number_enemies"]):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
+            enemies_count = i
+    ecs_world.add_component(level_entity, CLevel(1000, enemies_count))
 
 def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pygame.Vector2, explosion_info:dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
