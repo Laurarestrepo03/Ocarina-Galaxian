@@ -85,7 +85,8 @@ class GameEngine:
             await asyncio.sleep(0)
         self._clean()
 
-    def _create(self):       
+    def _create(self):
+        create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
         create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
@@ -93,7 +94,6 @@ class GameEngine:
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
         create_input_player(self.ecs_world)
-        create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -112,29 +112,23 @@ class GameEngine:
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         
         if self.execute_game:
+            system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
-            system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
-
             system_explosion_state(self.ecs_world)
-
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
-    
             system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
-
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
-
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg)
-
             system_animation(self.ecs_world, self.delta_time)
 
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen, self.delta_time)
         system_draw_stars(self.ecs_world, self.screen)
+        system_rendering(self.ecs_world, self.screen, self.delta_time)
         pygame.display.flip()
 
     def _clean(self):
