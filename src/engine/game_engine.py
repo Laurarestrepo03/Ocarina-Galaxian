@@ -8,8 +8,8 @@ from src.create.prefab_creator import create_level
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
 from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
-from src.ecs.systems.s_draw_stars import system_draw_stars
 from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
@@ -122,12 +122,12 @@ class GameEngine:
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg)
             system_animation(self.ecs_world, self.delta_time)
+            system_blink(self.ecs_world, self.delta_time)
 
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_draw_stars(self.ecs_world, self.screen)
         system_rendering(self.ecs_world, self.screen, self.delta_time)
         pygame.display.flip()
 
