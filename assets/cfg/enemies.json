@@ -15,7 +15,8 @@
                 }
             ]   
         },
-        "bullet_count": 2
+        "bullet_count": 2,
+        "points": 30
     },
     "invaders_enemy_02": {
         "image": "assets/img/invaders_enemy_02.png",
@@ -33,7 +34,8 @@
                 }
             ]     
         },
-        "bullet_count": 2
+        "bullet_count": 2,
+        "points": 40
     },
     "invaders_enemy_03": {
         "image": "assets/img/invaders_enemy_03.png",
@@ -51,7 +53,8 @@
                 }
             ]  
         },
-        "bullet_count": 2
+        "bullet_count": 2,
+        "points": 50
     },
     "invaders_enemy_04": {
         "image": "assets/img/invaders_enemy_04.png",
@@ -69,6 +72,7 @@
                 }
             ]      
         },
-        "bullet_count": 2
+        "bullet_count": 2,
+        "points": 150
     }
 }

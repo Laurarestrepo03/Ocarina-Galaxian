@@ -117,10 +117,12 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
     velocity = level_info["velocity"]
+    enemies_count = 0
     for line in level_info["lines"]:
         for i in range(0, line["number_enemies"]):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
+            enemies_count = i
 
 def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pygame.Vector2, explosion_info:dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
@@ -134,10 +136,28 @@ def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pyga
     ecs_world.add_component(explosion_entity, CExplosionState())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
 
-def create_pause_text(world: esper.World, text: str, font: pygame.Font, pos: pygame.Vector2 ,color: pygame.Color):
+def create_pause_text(world: esper.World, text: str, font: pygame.font, pos: pygame.Vector2 ,color: pygame.Color):
     text_entity = world.create_entity()
     surface = CSurface.from_text(text,font,color)
     size = surface.surf.get_size()
     world.add_component(text_entity, surface)
     world.add_component(text_entity,CTransform(pygame.Vector2(pos.x - size[0]/2,pos.y - size[1]/2)))   
     world.add_component(text_entity,CTagPause())  
+
+def create_text(world:esper.World, text_info:dict, text=None) -> int:
+    if text is None:
+        text = text_info["text"]
+    
+    text_font = ServiceLocator.fonts_service.get_font(text_info["font"], text_info["size"])
+    text_color = pygame.Vector3(text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])    
+    surface = CSurface.from_text(text,text_font,text_color)
+    text_size = surface.surf.get_size()
+    
+    text_pos = pygame.Vector2(text_info["position"]["x"] - text_size[0]/2, text_info["position"]["y"] - text_size[1]/2)
+    
+    
+    text_entity = world.create_entity()
+    world.add_component(text_entity, CTransform(text_pos))
+    world.add_component(text_entity, CSurface.from_text(text, text_font, text_color))
+    
+    return text_entity
