@@ -14,6 +14,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_pause import CTagPause
+from src.ecs.components.tags.c_tag_star import CTagStar
 from src.engine.service_locator import ServiceLocator
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
@@ -96,6 +97,7 @@ def create_star(ecs_world:esper.World, window_cfg, starfield_cfg):
         star_surface.fill((star_color["r"], star_color["g"], star_color["b"]))
         star_entity = create_sprite(ecs_world, star_pos, star_vel, star_surface)
         ecs_world.add_component(star_entity, CBlink(starfield_cfg))
+        ecs_world.add_component(star_entity, CTagStar())
 
 def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,
                   enemy_info:dict, type:str):
