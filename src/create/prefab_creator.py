@@ -96,7 +96,7 @@ def create_star(ecs_world:esper.World, window_cfg, starfield_cfg):
         star_surface = pygame.Surface((starfield_cfg["size"]["h"], starfield_cfg["size"]["w"]))
         star_surface.fill((star_color["r"], star_color["g"], star_color["b"]))
         star_entity = create_sprite(ecs_world, star_pos, star_vel, star_surface)
-        ecs_world.add_component(star_entity, CBlink(starfield_cfg))
+        ecs_world.add_component(star_entity, CBlink(starfield_cfg["blink_rate"]["min"], starfield_cfg["blink_rate"]["max"]))
         ecs_world.add_component(star_entity, CTagStar())
 
 def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,

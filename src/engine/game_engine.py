@@ -5,6 +5,7 @@ import esper
 
 from src.create.prefab_creator import create_bullet, create_input_player, create_pause_text, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
+from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
 from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.components.tags.c_tag_pause import CTagPause
@@ -122,9 +123,10 @@ class GameEngine:
     def _update(self):
         #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
-        
+        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
+        system_blink(self.ecs_world, self.delta_time)
         if self.execute_game:
-            system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
+            
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
             system_explosion_state(self.ecs_world)
@@ -136,7 +138,7 @@ class GameEngine:
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self)
 
             system_animation(self.ecs_world, self.delta_time)
-            system_blink(self.ecs_world, self.delta_time)
+            
 
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
             system_update_high_score(self.ecs_world,self.interface_cfg, self)
@@ -145,7 +147,7 @@ class GameEngine:
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen, self.delta_time)
+        system_rendering(self.ecs_world, self.screen)
         pygame.display.flip()
 
     def _clean(self):
@@ -184,6 +186,7 @@ class GameEngine:
                 if self.execute_game == True:
                     self.execute_game = False
                     pause_text_entity = create_text(self.ecs_world, self.interface_cfg["pause"])
+                    self.ecs_world.add_component(pause_text_entity, CBlink(0.5, 0.5))
                     self.ecs_world.add_component(pause_text_entity, CTagPause())
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
