@@ -1,5 +1,3 @@
-
-
-class CTagPause:
+class CTagStar:
     def __init__(self) -> None:
         pass
