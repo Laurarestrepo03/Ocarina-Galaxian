@@ -85,13 +85,13 @@ class PlayScene(Scene):
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
-        create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
         create_text(self.ecs_world, self.interface_cfg["1up_title"])
         self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
         self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))
         self.execute_game = True
+        create_input_player(self.ecs_world)
         
 
     
@@ -119,7 +119,7 @@ class PlayScene(Scene):
         self.execute_game = False
 
     def do_action(self, c_input: CInputCommand):
-        if c_input.name == "PLAYER_LEFT":
+        if c_input.name == "PLAYER_LEFT" and self.execute_game:
             if c_input.phase == CommandPhase.START:
                 self._player_tag.keys_left += 1
                 if self._player_tag.keys_left == 1:
