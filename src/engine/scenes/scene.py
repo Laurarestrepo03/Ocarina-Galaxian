@@ -11,12 +11,13 @@ class Scene:
         self.ecs_world = esper.World()
         self._game_engine:src.engine.game_engine.GameEngine = game_engine
         self.screen_rect = self._game_engine.screen.get_rect()
+        self.screen = self._game_engine.screen
 
     def do_process_events(self, event:pygame.event):
         system_input_player(self.ecs_world, event, self.do_action)
 
-    def simulate(self, delta_time, screen = None):
-        self.do_update(delta_time,screen)
+    def simulate(self, delta_time):
+        self.do_update(delta_time,self.screen)
         self.ecs_world._clear_dead_entities()
 
     def clean(self):

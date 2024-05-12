@@ -85,7 +85,6 @@ class PlayScene(Scene):
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
-        create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
         create_text(self.ecs_world, self.interface_cfg["1up_title"])
         self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
@@ -113,21 +112,25 @@ class PlayScene(Scene):
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
             system_update_high_score(self.ecs_world,self.interface_cfg, self)
             
-        self.ecs_world._clear_dead_entities()
-
     def do_clean(self):
         self.execute_game = False
 
     def do_action(self, c_input: CInputCommand):
-        if c_input.name == "PLAYER_LEFT" and self.execute_game:
+        if c_input.name == "PLAYER_LEFT":
+            
             if c_input.phase == CommandPhase.START:
+                print("---->INICIO up",self._player_tag.keys_left)
                 self._player_tag.keys_left += 1
                 if self._player_tag.keys_left == 1:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
+                print("---->INICIO",self._player_tag.keys_left)
                 self._player_tag.keys_left -= 1
                 if self._player_tag.keys_left == 0:
                     self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+                if self._player_tag.keys_left <0:
+                    self._player_tag.keys_left +=1
+            print(self._player_tag.keys_left)
         if c_input.name == "PLAYER_RIGHT":
             if c_input.phase == CommandPhase.START:
                 self._player_tag.keys_right += 1
@@ -137,6 +140,8 @@ class PlayScene(Scene):
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+                if self._player_tag.keys_right <0:
+                    self._player_tag.keys_right +=1
         if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
             bullet_components = self.ecs_world.get_components(CVelocity, CPLayerBulletState)
             for _, (c_v, c_pbs) in bullet_components:   

@@ -158,7 +158,7 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
-        self._current_scene.simulate(self.delta_time, self.screen)
+        self._current_scene.simulate(self.delta_time)
         """#system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time)

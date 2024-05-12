@@ -83,7 +83,8 @@ class IntroScene(Scene):
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
         self._player_trans= self.ecs_world.component_for_entity(self._player_entity, CTransform)
-        #create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
+        create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
+        
         create_text(self.ecs_world, self.interface_cfg["1up_title"])
         self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
@@ -99,6 +100,7 @@ class IntroScene(Scene):
         system_blink(self.ecs_world, delta_time)
         system_movement(self.ecs_world, delta_time)
         system_player_limit(self.ecs_world, screen)
+        system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self)
         system_animation(self.ecs_world, delta_time)
             
         self.ecs_world._clear_dead_entities()
@@ -125,15 +127,7 @@ class IntroScene(Scene):
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
-            bullet_components = self.ecs_world.get_components(CVelocity, CPLayerBulletState)
-            for _, (c_v, c_pbs) in bullet_components:   
-                if not c_pbs.state == PlayerBulletState.FIRED:
-                    ServiceLocator.sounds_service.play(self.player_bullet_cfg["sound"])
-                c_pbs.state = PlayerBulletState.FIRED
-                vel = pygame.Vector2(0, -1)
-                vel = vel.normalize() * self.player_bullet_cfg["velocity"]
-                c_v.vel = vel
+        
     
     def get_player_pos(self):
         return self._player_trans.pos
