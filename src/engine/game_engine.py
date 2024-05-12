@@ -53,7 +53,7 @@ class GameEngine:
         self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"],
                                      self.window_cfg["bg_color"]["g"],
                                      self.window_cfg["bg_color"]["b"])
-        self.ecs_world = esper.World()
+        #self.ecs_world = esper.World()
         self.introduction = True
         """self.execute_game = True
         self.start_game = True
