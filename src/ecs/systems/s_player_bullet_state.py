@@ -18,8 +18,6 @@ def system_player_bullet_state(ecs_world:esper.World, explosion_cfg:dict, self):
         elif c_pbs.state == PlayerBulletState.FIRED:
             _do_fired_state(ecs_world, c_t, c_s, c_pbs, explosion_cfg, self)
 
-
-
 def _do_not_fired_state(ecs_world:esper.World, c_t:CTransform, c_s:CSurface):
     player_components = ecs_world.get_components(CTransform, CSurface, CTagPlayer)
 
