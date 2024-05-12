@@ -89,13 +89,13 @@ def create_input_player(ecs_world:esper.World):
 
 def create_star(ecs_world:esper.World, window_cfg, starfield_cfg):
     for _ in range(starfield_cfg["number_of_stars"]):
+        star_size = pygame.Vector2(starfield_cfg["size"]["h"], starfield_cfg["size"]["w"])
         star_pos = pygame.Vector2(random.randint(0, window_cfg["size"]["w"]),
                              random.randint(0, window_cfg["size"]["h"]))
         star_vel = pygame.Vector2(random.uniform(0, 0), random.uniform(starfield_cfg["vertical_speed"]["min"], starfield_cfg["vertical_speed"]["max"]))
         star_color = random.choice(starfield_cfg["star_colors"])
-        star_surface = pygame.Surface((starfield_cfg["size"]["h"], starfield_cfg["size"]["w"]))
-        star_surface.fill((star_color["r"], star_color["g"], star_color["b"]))
-        star_entity = create_sprite(ecs_world, star_pos, star_vel, star_surface)
+        star_color = pygame.Color(star_color["r"], star_color["g"], star_color["b"])
+        star_entity = create_square(ecs_world, star_size, star_pos, star_vel, star_color)
         ecs_world.add_component(star_entity, CBlink(starfield_cfg["blink_rate"]["min"], starfield_cfg["blink_rate"]["max"]))
         ecs_world.add_component(star_entity, CTagStar())
 

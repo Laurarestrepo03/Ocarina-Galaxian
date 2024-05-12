@@ -121,12 +121,12 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
-        #system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
-        system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
+        system_star_field(self.ecs_world, self.window_cfg, self.delta_time, self.execute_game)
         system_blink(self.ecs_world, self.delta_time)
+        
         if self.execute_game:
-            
+
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
             system_explosion_state(self.ecs_world)

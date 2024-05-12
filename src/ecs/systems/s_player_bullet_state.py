@@ -12,15 +12,11 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 def system_player_bullet_state(ecs_world:esper.World, explosion_cfg:dict, self):
     components = ecs_world.get_components(CTransform, CSurface, CPLayerBulletState)
     
-    response = ""
     for _, (c_t, c_s, c_pbs) in components:
         if c_pbs.state == PlayerBulletState.NOT_FIRED:
             _do_not_fired_state(ecs_world, c_t, c_s)
         elif c_pbs.state == PlayerBulletState.FIRED:
-            response = _do_fired_state(ecs_world, c_t, c_s, c_pbs, explosion_cfg, self)
-
-    return response
-
+            _do_fired_state(ecs_world, c_t, c_s, c_pbs, explosion_cfg, self)
 
 def _do_not_fired_state(ecs_world:esper.World, c_t:CTransform, c_s:CSurface):
     player_components = ecs_world.get_components(CTransform, CSurface, CTagPlayer)
