@@ -5,6 +5,7 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform 
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.systems.s_intro import system_intro
 from src.ecs.systems.s_movement import system_movement
 import src.engine.game_engine
 from src.create.prefab_creator import create_bullet, create_input_player, create_pause_text, create_player, create_star, create_text, create_text
@@ -46,6 +47,7 @@ class PlayScene(Scene):
         self.enemy_destroyed = None
         self.high_score = 0
         self.score = 0
+        self.current_time = 0
 
     
     def _load_config_files(self):
@@ -71,7 +73,7 @@ class PlayScene(Scene):
         with open(path + "interface.json", encoding="utf-8") as interface_file:
             self.interface_cfg = json.load(interface_file)
 
-    def do_create(self, player_pos: pygame.Vector2):
+    def do_create(self, player_pos: pygame.Vector2 = None):
         """self.high_score = int(self.interface_cfg["high_score_value"]["text"])
         self.ready_entity = create_text(self.ecs_world, 
                     self.interface_cfg["ready"])
@@ -79,7 +81,7 @@ class PlayScene(Scene):
         ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])"""
 
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
-        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
+        
         self._player_entity = create_player(self.ecs_world, self.player_cfg, player_pos)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
@@ -95,9 +97,12 @@ class PlayScene(Scene):
 
     
     def do_update(self, delta_time: float, screen):
-
+        
+        self.current_time += delta_time 
+        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg, self.current_time)
         system_star_field(self.ecs_world, self.window_cfg, delta_time)
         system_blink(self.ecs_world, delta_time)
+        #system_intro(self.ecs_world, self.current_time)
 
         if self.execute_game:
             system_movement(self.ecs_world, delta_time)

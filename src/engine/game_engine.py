@@ -67,7 +67,7 @@ class GameEngine:
         # Original bg_color (0, 200, 128)"""
 
         self._scenes:dict[str, Scene] = {}
-        self._scenes["INTRO_SCENE"] = IntroScene(self)
+        #self._scenes["INTRO_SCENE"] = IntroScene(self)
         self._scenes["LEVEL_01"] = PlayScene(self)
         #self._scenes["WIN_SCENE"] = WinScene(self)
         #self._scenes["GAME_OVER_SCENE"] = GameOverScene(self)
@@ -109,9 +109,9 @@ class GameEngine:
             self._process_events()
             self._update()
             self._draw()
-            if self.current_time >= 3 and self.introduction:
+            """if self.current_time >= 3 and self.introduction:
                 self.switch_scene("LEVEL_01")
-                self.introduction = False
+                self.introduction = False"""
             self._handle_switch_scene()
             await asyncio.sleep(0)
         self._clean()

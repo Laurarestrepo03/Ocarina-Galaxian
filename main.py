@@ -6,5 +6,5 @@ from src.engine.game_engine import GameEngine
 
 if __name__ == "__main__":
     engine = GameEngine()
-    asyncio.run(engine.run("INTRO_SCENE"))
+    asyncio.run(engine.run("LEVEL_01"))
     
