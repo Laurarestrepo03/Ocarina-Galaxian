@@ -3,7 +3,7 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_bullet, create_input_player, create_pause_text, create_player, create_star, create_text
+from src.create.prefab_creator import create_bullet, create_input_player, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
