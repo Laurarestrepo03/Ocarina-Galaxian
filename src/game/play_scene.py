@@ -5,8 +5,10 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform 
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.systems.s_intro import system_intro
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_ready import system_ready
 import src.engine.game_engine
 from src.create.prefab_creator import create_bullet, create_input_player, create_pause_text, create_player, create_star, create_text, create_text
 from src.create.prefab_creator import create_level
@@ -74,11 +76,12 @@ class PlayScene(Scene):
             self.interface_cfg = json.load(interface_file)
 
     def do_create(self, player_pos: pygame.Vector2 = None):
-        """self.high_score = int(self.interface_cfg["high_score_value"]["text"])
+        self.high_score = int(self.interface_cfg["high_score_value"]["text"])
         self.ready_entity = create_text(self.ecs_world, 
                     self.interface_cfg["ready"])
+        self.ecs_world.add_component(self.ready_entity, CTagReady())
                     
-        ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])"""
+        ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])
 
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
         
@@ -99,9 +102,9 @@ class PlayScene(Scene):
     def do_update(self, delta_time: float, screen):
         
         self.current_time += delta_time 
-        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg, self.current_time)
         system_star_field(self.ecs_world, self.window_cfg, delta_time)
         system_blink(self.ecs_world, delta_time)
+        system_ready(self.ecs_world, self.current_time, self.level_cfg, self.enemies_cfg)
         #system_intro(self.ecs_world, self.current_time)
 
         if self.execute_game:
@@ -147,7 +150,7 @@ class PlayScene(Scene):
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
                 if self._player_tag.keys_right <0:
                     self._player_tag.keys_right +=1
-        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
+        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game and self.current_time >= 3:
             bullet_components = self.ecs_world.get_components(CVelocity, CPLayerBulletState)
             for _, (c_v, c_pbs) in bullet_components:   
                 if not c_pbs.state == PlayerBulletState.FIRED:
@@ -156,7 +159,7 @@ class PlayScene(Scene):
                 vel = pygame.Vector2(0, -1)
                 vel = vel.normalize() * self.player_bullet_cfg["velocity"]
                 c_v.vel = vel
-        if c_input.name == "PAUSE":
+        if c_input.name == "PAUSE" and self.current_time >= 3:
             if c_input.phase == CommandPhase.START:
                 if self.execute_game == True:
                     self.execute_game = False
