@@ -195,7 +195,7 @@ class GameEngine:
         self._current_scene.do_draw(self.screen)
         pygame.display.flip()
 
-    def clean(self):
+    def _clean(self):
         if self._current_scene is not None:
             self._current_scene.clean()
         pygame.quit()
