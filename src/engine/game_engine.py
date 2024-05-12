@@ -31,6 +31,10 @@ from src.ecs.systems.s_star_field import system_star_field
 from src.ecs.systems.s_update_high_score import system_update_high_score
 from src.ecs.systems.s_update_score import system_update_score
 from src.engine.service_locator import ServiceLocator
+from src.engine.scenes.scene import Scene
+from src.game.intro_scene import IntroScene
+from src.game.play_scene import PlayScene
+
 
 class GameEngine:
     def __init__(self) -> None:
@@ -50,16 +54,26 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["g"],
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
-        self.execute_game = True
-        self.start_game = True
         self.introduction = True
+        """self.execute_game = True
+        self.start_game = True
+        
         self.ready_entity = None
 
         self.high_score = int(self.interface_cfg["high_score_value"]["text"])
         self.score = 0
         self.enemy_destroyed = None
         # Original framerate = 0
-        # Original bg_color (0, 200, 128)
+        # Original bg_color (0, 200, 128)"""
+
+        self._scenes:dict[str, Scene] = {}
+        self._scenes["INTRO_SCENE"] = IntroScene(self)
+        self._scenes["LEVEL_01"] = PlayScene(self)
+        #self._scenes["WIN_SCENE"] = WinScene(self)
+        #self._scenes["GAME_OVER_SCENE"] = GameOverScene(self)
+        self._current_scene_name = None
+        self._current_scene:Scene = None
+        self._scene_name_to_switch:str = None
 
     def _load_config_files(self):
         path = 'assets/cfg/'
@@ -84,20 +98,31 @@ class GameEngine:
         with open(path + "interface.json", encoding="utf-8") as interface_file:
             self.interface_cfg = json.load(interface_file)
             
-    async def run(self) -> None:
+    async def run(self, start_scene_name:str) -> None:
+        self._current_scene_name = start_scene_name
+        self._current_scene = self._scenes[start_scene_name]
         self._create()
         self.is_running = True
+        
         while self.is_running:
             self._calculate_time()
             self._process_events()
             self._update()
             self._draw()
+            if self.current_time >= 3 and self.introduction:
+                self.switch_scene("LEVEL_01")
+                self.introduction = False
+            self._handle_switch_scene()
             await asyncio.sleep(0)
         self._clean()
+    
+    def switch_scene(self, new_scene_name:str):
+        self._scene_name_to_switch = new_scene_name
+
 
     def _create(self):
-
-                            
+        self._current_scene.do_create()
+        """                    
         self.ready_entity = create_text(self.ecs_world, 
                     self.interface_cfg["ready"])
                     
@@ -115,23 +140,26 @@ class GameEngine:
         create_text(self.ecs_world, self.interface_cfg["1up_title"])
         self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
-        self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))
+        self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))"""
 
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
-        if self.execute_game:
-            self.current_time += self.delta_time 
+        """if self.execute_game:
+            """
+        self.current_time += self.delta_time 
     
     def _process_events(self):
         for event in pygame.event.get():
-            system_input_player(self.ecs_world, event, self._do_action)
+            "system_input_player(self.ecs_world, event, self._do_action)"
+            self._current_scene.do_process_events(event)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
     def _update(self):
-        #system_movement(self.ecs_world, self.delta_time)
+        self._current_scene.simulate(self.delta_time, self.screen)
+        """#system_movement(self.ecs_world, self.delta_time)
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time)
         system_blink(self.ecs_world, self.delta_time)
@@ -160,18 +188,21 @@ class GameEngine:
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
             system_update_high_score(self.ecs_world,self.interface_cfg, self)
             
-        self.ecs_world._clear_dead_entities()
+        self.ecs_world._clear_dead_entities()"""
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
+        self._current_scene.do_draw(self.screen)
         pygame.display.flip()
 
-    def _clean(self):
+    def clean(self):
+        if self._current_scene is not None:
+            self._current_scene.clean()
         pygame.quit()
 
     def _do_action(self, c_input:CInputCommand):
-        if c_input.name == "PLAYER_LEFT":
+        self._current_scene.do_action(c_input)
+        """if c_input.name == "PLAYER_LEFT":
             if c_input.phase == CommandPhase.START:
                 self._player_tag.keys_left += 1
                 if self._player_tag.keys_left == 1:
@@ -208,10 +239,25 @@ class GameEngine:
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
                     self.execute_game = True
-                    system_pause(self.ecs_world)
+                    system_pause(self.ecs_world)"""
 
-    def create_elements(self):
+    """def create_elements(self):
         create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
-        create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
-        
+        create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)"""
+
+    def _handle_switch_scene(self):
+        if self._scene_name_to_switch is not None:
+            if self._current_scene_name == "INTRO_SCENE":
+                pos = self._current_scene.get_player_pos()
+                self._current_scene.clean()
+                self._current_scene = self._scenes[self._scene_name_to_switch]
+                self._current_scene.do_create(pos)
+                self._scene_name_to_switch = None
+            else:
+                self._current_scene.clean()
+                self._current_scene = self._scenes[self._scene_name_to_switch]
+                self._current_scene_name = self._scene_name_to_switch
+                self._current_scene.do_create()
+                self._scene_name_to_switch = None
+
             

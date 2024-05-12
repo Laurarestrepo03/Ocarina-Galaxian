@@ -52,10 +52,11 @@ def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2,
                             CSurface.from_surface(surface))
     return sprite_entity
     
-def create_player(ecs_world:esper.World, player_info:dict) -> int:
+def create_player(ecs_world:esper.World, player_info:dict, pos: pygame.Vector2 = None) -> int:
     player_surface = ServiceLocator.images_service.get(player_info["image"])
     size = player_surface.get_rect().size
-    pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
+    if pos == None:
+        pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
                          player_info["spawn_point"]["y"] - (size[1]/2))
     vel = pygame.Vector2(0,0)
     player_entity = create_sprite(ecs_world, pos, vel, player_surface)
