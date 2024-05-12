@@ -138,14 +138,6 @@ def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pyga
     ecs_world.add_component(explosion_entity, CExplosionState())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
 
-def create_pause_text(world: esper.World, text: str, font: pygame.font, pos: pygame.Vector2 ,color: pygame.Color):
-    text_entity = world.create_entity()
-    surface = CSurface.from_text(text,font,color)
-    size = surface.surf.get_size()
-    world.add_component(text_entity, surface)
-    world.add_component(text_entity,CTransform(pygame.Vector2(pos.x - size[0]/2,pos.y - size[1]/2)))   
-    world.add_component(text_entity,CTagPause())  
-
 def create_text(world:esper.World, text_info:dict, text=None) -> int:
     if text is None:
         text = text_info["text"]
