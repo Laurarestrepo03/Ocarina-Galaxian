@@ -1,5 +1,6 @@
 {
     "velocity": 8,
+    "enemy_attack_time": 3,
     "lines": [
         {
             "enemy_type": "invaders_enemy_04",
