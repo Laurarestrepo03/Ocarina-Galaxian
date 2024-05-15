@@ -147,8 +147,8 @@ class GameEngine:
             
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
             system_update_high_score(self.ecs_world,self.interface_cfg, self)
-            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg["enemy_attack_time"], self)
-            system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time)
+            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg, self)
+            system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
             
             
         self.ecs_world._clear_dead_entities()

@@ -1,6 +1,7 @@
 {
     "velocity": 8,
     "enemy_attack_time": 3,
+    "enemy_attack_sound": "assets/snd/enemy_launch.ogg",
     "lines": [
         {
             "enemy_type": "invaders_enemy_04",
