@@ -3,7 +3,7 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_bullet, create_input_player, create_player, create_star, create_text
+from src.create.prefab_creator import create_bullet, create_enemy_bullet_spawner, create_input_player, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_game_state import GameState, CGameState
@@ -96,6 +96,7 @@ class GameEngine:
         self._clean()
 
     def _create(self):
+        create_enemy_bullet_spawner(self.ecs_world, self.level_cfg)
         self.game_manager = self.ecs_world.create_entity()
         self.ecs_world.add_component(self.game_manager, CGameState())
         self.game_state = self.ecs_world.component_for_entity(self.game_manager, CGameState)
@@ -147,14 +148,13 @@ class GameEngine:
             system_explosion_state(self.ecs_world)
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
-            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
+            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
 
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
 
             system_animation(self.ecs_world, self.delta_time)
             
-
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
             system_update_high_score(self.ecs_world,self.interface_cfg, self)
             

@@ -5,6 +5,7 @@ import pygame
 
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_blink import CBlink
+from src.ecs.components.c_enemy_bullet_spawner import CEnemyBulletSpawner
 from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_explosion_state import CExplosionState
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState
@@ -156,3 +157,7 @@ def create_text(world:esper.World, text_info:dict, text=None) -> int:
     world.add_component(text_entity, CSurface.from_text(text, text_font, text_color))
     
     return text_entity
+
+def create_enemy_bullet_spawner(ecs_world:esper.World, lvl_info:dict):
+    spawner_entity = ecs_world.create_entity()
+    ecs_world.add_component(spawner_entity, CEnemyBulletSpawner(lvl_info))
