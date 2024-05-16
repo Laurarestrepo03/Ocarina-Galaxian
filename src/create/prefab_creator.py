@@ -124,7 +124,8 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
         for i in range(0, line["number_enemies"]):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
-            enemies_count = i
+            enemies_count +=1
+    return enemies_count
 
 def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pygame.Vector2, explosion_info:dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])

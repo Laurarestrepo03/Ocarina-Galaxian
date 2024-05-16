@@ -6,9 +6,11 @@ import esper
 from src.create.prefab_creator import create_bullet, create_input_player, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
+from src.ecs.components.c_game_state import GameState, CGameState
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
 from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.components.tags.c_tag_pause import CTagPause
+from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
@@ -21,6 +23,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
 from src.ecs.systems.s_explosion_state import system_explosion_state
+from src.ecs.systems.s_game_manager import system_game_manager
 from src.ecs.systems.s_pause import system_pause
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
@@ -93,8 +96,19 @@ class GameEngine:
         self._clean()
 
     def _create(self):
+        self.game_manager = self.ecs_world.create_entity()
+        self.ecs_world.add_component(self.game_manager, CGameState())
+        self.game_state = self.ecs_world.component_for_entity(self.game_manager, CGameState)
+
+        self.high_score = int(self.interface_cfg["high_score_value"]["text"])
+        self.ready_entity = create_text(self.ecs_world, 
+                    self.interface_cfg["ready"])
+        self.ecs_world.add_component(self.ready_entity, CTagReady())
+                    
+        ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])
+
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
-        create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
+        #create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
@@ -124,8 +138,9 @@ class GameEngine:
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time, self.execute_game)
         system_blink(self.ecs_world, self.delta_time)
+        system_game_manager(self.ecs_world, self.delta_time, self.level_cfg, self.enemies_cfg, self.game_manager, self.interface_cfg)
         
-        if self.execute_game:
+        if self.game_state.state != GameState.PAUSED:
 
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
@@ -135,7 +150,7 @@ class GameEngine:
             system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.delta_time)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
 
-            system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self)
+            system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
 
             system_animation(self.ecs_world, self.delta_time)
             
@@ -172,7 +187,7 @@ class GameEngine:
                 self._player_tag.keys_right -= 1
                 if self._player_tag.keys_right == 0:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.execute_game:
+        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.game_state.state == GameState.PLAY:
             bullet_components = self.ecs_world.get_components(CVelocity, CPLayerBulletState)
             for _, (c_v, c_pbs) in bullet_components:   
                 if not c_pbs.state == PlayerBulletState.FIRED:
@@ -183,15 +198,16 @@ class GameEngine:
                 c_v.vel = vel
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.START:
-                if self.execute_game == True:
-                    self.execute_game = False
+                if self.game_state.state == GameState.PLAY:
+                    self.game_state.state = GameState.PAUSED
                     pause_text_entity = create_text(self.ecs_world, self.interface_cfg["pause"])
                     self.ecs_world.add_component(pause_text_entity, CBlink(0.5, 0.5))
                     self.ecs_world.add_component(pause_text_entity, CTagPause())
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
-                    self.execute_game = True
-                    system_pause(self.ecs_world)
+                    if self.game_state.state == GameState.PAUSED:
+                        self.game_state.state = GameState.PLAY
+                        system_pause(self.ecs_world)
 
 
             
