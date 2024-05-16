@@ -1,12 +1,18 @@
+import pygame
 import esper
-from src.create.prefab_creator import create_level, create_text
+from src.create.prefab_creator import create_level, create_player, create_text
+from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_transform import CTransform
+from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.components.c_game_state import CGameState, GameState
 
-def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemies_cfg, game_manager_entity, interface_cfg):
+def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemies_cfg, game_manager_entity, interface_cfg, player_entity, player_info):
     manager_component = world.component_for_entity(game_manager_entity, CGameState)
     component = world.get_component(CTagReady)
-
+    player_surface = world.component_for_entity(player_entity, CSurface)
+    player_pos = world.component_for_entity(player_entity, CTransform)
 
         
     if manager_component.state != GameState.PAUSED:
@@ -41,6 +47,16 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             manager_component.state = GameState.PLAY
             manager_component.current_enemyes = enemies
             print(enemies)
+        
+        elif manager_component.state == GameState.DEAD:
+            manager_component.time_dead += delta_time
+            if  manager_component.time_dead >= 3:
+                size = player_surface.area.size
+                player_pos.pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
+                         player_info["spawn_point"]["y"] - (size[1]/2))
+                player_surface.visible = True
+                manager_component.state = GameState.PLAY
+                manager_component.time_dead = 0
 
 
              

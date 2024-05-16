@@ -12,6 +12,8 @@ class CGameState():
     def __init__(self):
         self.state = GameState.READY
         self.current_time = 0
+        self.time_dead = 0
         self.current_enemyes = 0
+        self.number_lives = 4
 
 

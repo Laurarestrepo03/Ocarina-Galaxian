@@ -110,6 +110,7 @@ class GameEngine:
 
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
         #create_level(self.ecs_world, self.level_cfg, self.enemies_cfg)
+        
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
@@ -139,7 +140,7 @@ class GameEngine:
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
         system_star_field(self.ecs_world, self.window_cfg, self.delta_time, self.execute_game)
         system_blink(self.ecs_world, self.delta_time)
-        system_game_manager(self.ecs_world, self.delta_time, self.level_cfg, self.enemies_cfg, self.game_manager, self.interface_cfg)
+        system_game_manager(self.ecs_world, self.delta_time, self.level_cfg, self.enemies_cfg, self.game_manager, self.interface_cfg, self._player_entity, self.player_cfg)
         
         if self.game_state.state != GameState.PAUSED:
 
@@ -149,7 +150,7 @@ class GameEngine:
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
             system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time)
-            system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg)
+            system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
 
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
 
