@@ -14,6 +14,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.engine.service_locator import ServiceLocator
@@ -53,6 +54,29 @@ def create_sprite(ecs_world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2,
                             CSurface.from_surface(surface))
     return sprite_entity
     
+def create_life(ecs_world:esper.World, interface_info:dict):
+    desface = 0.5
+    number = 1
+    for _ in range(interface_info["lifes"]["lifes_number"]):
+        life_surface = ServiceLocator.images_service.get(interface_info["lifes"]["image"])
+        size = life_surface.get_rect().size
+        pos = pygame.Vector2(interface_info["lifes"]["position"]["x"] + desface,
+                            interface_info["lifes"]["position"]["y"])
+        desface += size[0]
+        vel = pygame.Vector2(0,0)
+        life_entity = create_sprite(ecs_world, pos, vel, life_surface)
+        ecs_world.add_component(life_entity, CTagLife(number))
+        number+=1
+
+def create_flag(ecs_world:esper.World, interface_info:dict):
+    flag_surface = ServiceLocator.images_service.get(interface_info["level_flag"]["image"])
+    size = flag_surface.get_rect().size
+    pos = pygame.Vector2(interface_info["level_flag"]["position"]["x"] ,
+                            interface_info["level_flag"]["position"]["y"])
+    vel = pygame.Vector2(0,0)
+    create_sprite(ecs_world, pos, vel, flag_surface)
+    
+
 def create_player(ecs_world:esper.World, player_info:dict) -> int:
     player_surface = ServiceLocator.images_service.get(player_info["image"])
     size = player_surface.get_rect().size

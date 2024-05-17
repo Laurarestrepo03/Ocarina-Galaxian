@@ -15,5 +15,6 @@ class CGameState():
         self.time_dead = 0
         self.current_enemyes = 0
         self.number_lives = 4
+        self.current_level = 1
 
 

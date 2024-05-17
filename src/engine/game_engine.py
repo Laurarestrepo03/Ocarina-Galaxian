@@ -3,12 +3,15 @@ import json
 import pygame
 import esper
 
-from src.create.prefab_creator import create_bullet, create_enemy_bullet_spawner, create_input_player, create_player, create_star, create_text
+from src.create.prefab_creator import create_bullet, create_enemy_bullet_spawner, create_flag, create_input_player, create_life, create_player, create_star, create_text
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_game_state import GameState, CGameState
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
+from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_bullet import BulletType
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_level import CTagLevel
 from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.systems.s_animation import system_animation
@@ -104,8 +107,7 @@ class GameEngine:
         self.high_score = int(self.interface_cfg["high_score_value"]["text"])
         self.ready_entity = create_text(self.ecs_world, 
                     self.interface_cfg["ready"])
-        self.ecs_world.add_component(self.ready_entity, CTagReady())
-                    
+        self.ecs_world.add_component(self.ready_entity, CTagReady())      
         ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])
 
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
@@ -115,6 +117,7 @@ class GameEngine:
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         self._player_tag = self.ecs_world.component_for_entity(self._player_entity, CTagPlayer)
+        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
         create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
@@ -122,6 +125,10 @@ class GameEngine:
         self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
         self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))
+        create_life(self.ecs_world, self.interface_cfg)
+        create_flag(self.ecs_world, self.interface_cfg)
+        self.level_entity = create_text(self.ecs_world, self.interface_cfg["level_text"])
+        self.ecs_world.add_component(self.level_entity, CTagLevel())
 
 
     def _calculate_time(self):
@@ -209,6 +216,58 @@ class GameEngine:
                     if self.game_state.state == GameState.PAUSED:
                         self.game_state.state = GameState.PLAY
                         system_pause(self.ecs_world)
+        if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.game_state.state == GameState.GAME_OVER:
+            enemyes = self.ecs_world.get_components(CTagEnemy)
+            #eliminar los enemigos
+            for ent, (c_t) in enemyes:
+                self.ecs_world.delete_entity(ent)
+            self.high_score = int(self.interface_cfg["high_score_value"]["text"])
+            component = self.ecs_world.get_component(CTagReady)
+            #eliminar el game over text
+            for entity, (c_t) in component:
+                self.ecs_world.delete_entity(entity)
+            
+            #reiniciar las variables del juego
+            self.score = 0
+            self.game_state.current_time = 0
+            self.game_state.current_enemyes = 0
+            self.game_state.time_dead = 0
+            self.game_state.current_level = 1
+            #Crear nuevamente el texto ready y el sonido
+            self.ready_entity = create_text(self.ecs_world, 
+                    self.interface_cfg["ready"])
+            self.ecs_world.add_component(self.ready_entity, CTagReady())
+            ServiceLocator.sounds_service.play(self.interface_cfg["ready"]["sound"])
+            #Cambiar el estado a ready
+            self.game_state.state = GameState.READY
+            #Ajustar la posición del jugador y hacerlo visible nuevamente
+            self._player_c_t.pos = pygame.Vector2(self.player_cfg["spawn_point"]["x"] - (self._player_c_s.area.size[0]/2),
+                        self.player_cfg["spawn_point"]["y"] - (self._player_c_s.area.size[1]/2))
+            self._player_c_s.visible = True
+            #crear las vidas nuevamente
+            create_life(self.ecs_world, self.interface_cfg)
+            #reiniciar el texto de nivel
+            level_components = self.ecs_world.get_components(CSurface, CTagLevel) 
+            for entity, (c_s, c_lev) in level_components:
+                font = ServiceLocator.fonts_service.get_font(self.interface_cfg["level_text"]["font"], self.interface_cfg["level_text"]["size"])
+                text_surface = font.render("01", True, pygame.Color(self.interface_cfg["level_text"]["color"]["r"], 
+                                                                    self.interface_cfg["level_text"]["color"]["g"], 
+                                                                    self.interface_cfg["level_text"]["color"]["b"]))
+                c_s.surf = text_surface
+                c_s.area = c_s.surf.get_rect()
+            #reiniciar el texto de score
+            surface_component = self.ecs_world.component_for_entity(self.score_entity, CSurface)
+            font = ServiceLocator.fonts_service.get_font(self.interface_cfg["score_value"]["font"], self.interface_cfg["score_value"]["size"])
+            surface = font.render("00", True, pygame.Color(self.interface_cfg["score_value"]["color"]["r"], 
+                                                                self.interface_cfg["score_value"]["color"]["g"], 
+                                                                self.interface_cfg["score_value"]["color"]["b"]))
+            surface_component.surf = surface
+            surface_component.area = surface_component.surf.get_rect()
+
+
+      
+
+            
 
 
             
