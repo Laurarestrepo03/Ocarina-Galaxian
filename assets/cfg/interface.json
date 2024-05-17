@@ -112,5 +112,19 @@
             "b": 0
         },
         "size": 8
-    }
+    },
+    "game_over": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "sound": "assets/snd/game_start.ogg",
+        "text": "GAME OVER",
+        "position": {
+            "x": 128,
+            "y": 150
+        },
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "size": 8}
 }

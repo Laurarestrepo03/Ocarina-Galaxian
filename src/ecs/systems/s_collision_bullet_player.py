@@ -20,8 +20,10 @@ def system_collision_bullet_player(ecs_world:esper.World, explosion_cfg:dict, ga
                     #TODO: quitar comentario cuando se implemente reinicio
                     p_c_s.visible= False
                     game_state.state = GameState.DEAD
+                    game_state.number_lives -=1
                     ecs_world.delete_entity(bullet_entity)
                     create_explosion(ecs_world, pl_rect, p_c_s.area.size, explosion_cfg)
+
     
     for bullet_entity, (b_c_s, b_c_t, b_tb) in bullet_components:
         if game_state.state == GameState.DEAD and b_tb.type == BulletType.PLAYER:

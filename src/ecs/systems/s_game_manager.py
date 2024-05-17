@@ -7,6 +7,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.components.c_game_state import CGameState, GameState
+from src.engine.service_locator import ServiceLocator
 
 def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemies_cfg, game_manager_entity, interface_cfg, player_entity, player_info):
     manager_component = world.component_for_entity(game_manager_entity, CGameState)
@@ -50,13 +51,24 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
         
         elif manager_component.state == GameState.DEAD:
             manager_component.time_dead += delta_time
+        
             if  manager_component.time_dead >= 3:
-                size = player_surface.area.size
-                player_pos.pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
-                         player_info["spawn_point"]["y"] - (size[1]/2))
-                player_surface.visible = True
-                manager_component.state = GameState.PLAY
-                manager_component.time_dead = 0
+                if manager_component.number_lives == 0:
+                    manager_component.state = GameState.GAME_OVER
+                    game_over = create_text(world, 
+                            interface_cfg["game_over"])
+                    world.add_component(game_over, CTagReady())
+                    ServiceLocator.sounds_service.play(interface_cfg["game_over"]["sound"])
+                else:
+                    size = player_surface.area.size
+                    player_pos.pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
+                            player_info["spawn_point"]["y"] - (size[1]/2))
+                    player_surface.visible = True
+                    manager_component.state = GameState.PLAY
+                    manager_component.time_dead = 0
+        
+        
+
 
 
              
