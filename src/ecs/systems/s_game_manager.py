@@ -43,6 +43,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             world.add_component(win, CTagReady())
             world.add_component(ready_win, CTagReady())
             manager_component.state = GameState.WIN
+            ServiceLocator.sounds_service.play(interface_cfg["ready"]["sound"])
             manager_component.current_time = 0
             update_high_score_value(world)
 
@@ -58,7 +59,6 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
                 c_s.surf = text_surface
                 c_s.area = c_s.surf.get_rect()
             
-                
             enemies = create_level(world, level_cfg, enemies_cfg, interface_cfg)
             manager_component.state = GameState.PLAY
             manager_component.current_enemyes = enemies
