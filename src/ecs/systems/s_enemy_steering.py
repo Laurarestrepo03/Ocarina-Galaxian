@@ -30,18 +30,13 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
                 c_st.state = SteeringState.RETURNING
                 
         elif c_st.state == SteeringState.RETURNING:
-            c_v.vel = (c_st.return_position - c_t.pos)
-            #print("Velocidad:" + str(c_v.vel))
-            if abs(c_st.return_position.x - c_t.pos.x) < 3 and  abs(c_st.return_position.y - c_t.pos.y) < 3:
+            c_v.vel = (c_st.return_position - c_t.pos).normalize() * 40
+            if abs(c_st.return_position.x - c_t.pos.x) < 5 and  abs(c_st.return_position.y - c_t.pos.y) < 5:
                 c_t.pos = c_st.return_position
                 c_v.vel = pygame.Vector2(enemy_grup_vel, 0)
-                               
-                #world.delete_entity(c_st.entity)
+
                 world.remove_component(c_st.entity, CSteering)
-                c_st.state = SteeringState.GROUP
-        
-        elif c_st.state == SteeringState.GROUP:
-            world.remove_component(c_st.entity, CSteering)
+
     
 
     

@@ -5,3 +5,7 @@ class CLevel:
         self.enemy_destroyed = None
         
         self.current_attack_interval = 0
+        
+        self.direction = 1
+        self.x_relative_position = 0
+        self.vel = 0
