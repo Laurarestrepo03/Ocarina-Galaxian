@@ -27,5 +27,7 @@ def system_collision_bullet_player(ecs_world:esper.World, explosion_cfg:dict, ga
     for bullet_entity, (b_c_s, b_c_t, b_tb) in bullet_components:
         if (game_state.state == GameState.DEAD and b_tb.type == BulletType.PLAYER) or (game_state.state == GameState.GAME_OVER and b_tb.type == BulletType.PLAYER) :
             b_c_s.visible= False
+        elif (game_state.state == GameState.WIN and b_tb.type == BulletType.ENEMY):
+            b_c_s.visible= False
         else:
             b_c_s.visible= True
