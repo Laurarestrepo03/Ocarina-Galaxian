@@ -15,7 +15,7 @@
                 }
             ]   
         },
-        "bullet_count": 2,
+        "bullet_count": 3,
         "points": 30
     },
     "invaders_enemy_02": {
@@ -34,7 +34,7 @@
                 }
             ]     
         },
-        "bullet_count": 2,
+        "bullet_count": 3,
         "points": 40
     },
     "invaders_enemy_03": {
@@ -53,7 +53,7 @@
                 }
             ]  
         },
-        "bullet_count": 2,
+        "bullet_count": 4,
         "points": 50
     },
     "invaders_enemy_04": {
@@ -72,7 +72,7 @@
                 }
             ]      
         },
-        "bullet_count": 2,
+        "bullet_count": 3,
         "points": 60
     }
 }
