@@ -1,5 +1,3 @@
-
-
 import pygame
 
 class FontsService:
