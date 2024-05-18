@@ -156,7 +156,7 @@ class GameEngine:
             system_explosion_state(self.ecs_world)
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
-            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time)
+            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
 
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
