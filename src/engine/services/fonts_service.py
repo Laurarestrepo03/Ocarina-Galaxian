@@ -2,7 +2,7 @@
 
 import pygame
 
-class FontsServices:
+class FontsService:
     def __init__(self) -> None:
         self._text = {}
 
