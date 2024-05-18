@@ -1,6 +1,7 @@
 import esper
 import pygame
 from src.create.prefab_creator import create_level, create_player, create_text
+from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -63,12 +64,13 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             manager_component.time_dead += delta_time
 
             if  manager_component.time_dead >= 3:
-                if manager_component.number_lives == 0:
+                if manager_component.number_lives == 0 and not manager_component.game_over_text_created:
                     manager_component.state = GameState.GAME_OVER
                     game_over = create_text(world, 
                             interface_cfg["game_over"])
                     world.add_component(game_over, CTagReady())
                     ServiceLocator.sounds_service.play(interface_cfg["game_over"]["sound"])
+                    manager_component.game_over_text_created = True
                 else:
                     size = player_surface.area.size
                     player_pos.pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
@@ -79,6 +81,17 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
                     for entity, (c_l) in life_component:
                         if c_l.number == manager_component.number_lives:
                             world.delete_entity(entity)
+        
+        elif manager_component.state == GameState.GAME_OVER:
+            manager_component.time_game_over += delta_time
+            if manager_component.time_game_over >= 1 and not manager_component.game__help_text_created :
+                game_over_help = create_text(world, 
+                            interface_cfg["game_over_help"])
+                world.add_component(game_over_help, CTagReady())
+                world.add_component(game_over_help, CBlink(0.7, 0.7))
+                manager_component.game__help_text_created = True
+
+
         
         
 

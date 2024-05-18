@@ -16,5 +16,8 @@ class CGameState():
         self.current_enemyes = 0
         self.number_lives = 4
         self.current_level = 1
+        self.time_game_over = 0
+        self.game_over_text_created = False
+        self.game__help_text_created = False
 
 

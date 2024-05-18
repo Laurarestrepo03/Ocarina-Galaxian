@@ -26,7 +26,7 @@ def system_collision_bullet_player(ecs_world:esper.World, explosion_cfg:dict, ga
 
     
     for bullet_entity, (b_c_s, b_c_t, b_tb) in bullet_components:
-        if game_state.state == GameState.DEAD and b_tb.type == BulletType.PLAYER:
+        if (game_state.state == GameState.DEAD and b_tb.type == BulletType.PLAYER) or (game_state.state == GameState.GAME_OVER and b_tb.type == BulletType.PLAYER) :
             #TODO: quitar comentario cuando se implemente reinicio
             b_c_s.visible= False
         else:

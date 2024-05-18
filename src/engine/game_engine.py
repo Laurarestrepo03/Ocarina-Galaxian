@@ -233,6 +233,10 @@ class GameEngine:
             self.game_state.current_enemyes = 0
             self.game_state.time_dead = 0
             self.game_state.current_level = 1
+            self.game_state.number_lives = 4
+            self.game_state.game__help_text_created= False
+            self.game_state.game_over_text_created = False
+            self.game_state.time_game_over = 0
             #Crear nuevamente el texto ready y el sonido
             self.ready_entity = create_text(self.ecs_world, 
                     self.interface_cfg["ready"])
