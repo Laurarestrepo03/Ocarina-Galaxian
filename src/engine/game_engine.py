@@ -1,10 +1,8 @@
 import asyncio
-import json
 import pygame
 import esper
 
 from src.create.prefab_creator import create_bullet, create_enemy_bullet_spawner, create_flag, create_input_player, create_life, create_player, create_star, create_text
-from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_game_state import GameState, CGameState
 from src.ecs.components.c_level import CLevel
@@ -65,27 +63,16 @@ class GameEngine:
         # Original bg_color (0, 200, 128)
 
     def _load_config_files(self):
-        path = 'assets/cfg/'
-        with open(path + "window.json", encoding="utf-8") as window_file:
-            self.window_cfg = json.load(window_file)
-        with open(path + "player.json", encoding="utf-8") as player_file:
-            self.player_cfg = json.load(player_file)
-        with open(path + "player_bullet.json", encoding="utf-8") as player_bullet_file:
-            self.player_bullet_cfg = json.load(player_bullet_file)
-        with open(path + "enemy_bullet.json", encoding="utf-8") as enemy_bullet_file:
-            self.enemy_bullet_cfg = json.load(enemy_bullet_file)
-        with open(path + "starfield.json", encoding="utf-8") as starfield_file:
-            self.starfield_cfg = json.load(starfield_file)
-        with open(path + "level_01.json", encoding="utf-8") as level_file:
-            self.level_cfg = json.load(level_file)
-        with open(path + "enemies.json", encoding="utf-8") as enemies_file:
-            self.enemies_cfg = json.load(enemies_file)
-        with open(path + "enemy_explosion.json", encoding="utf-8") as enemy_explosion_file:
-            self.enemy_explosion_cfg = json.load(enemy_explosion_file)
-        with open(path + "player_explosion.json", encoding="utf-8") as player_explosion_file:
-            self.player_explosion_cfg = json.load(player_explosion_file)
-        with open(path + "interface.json", encoding="utf-8") as interface_file:
-            self.interface_cfg = json.load(interface_file)
+        self.enemies_cfg = ServiceLocator.config_service.enemies
+        self.enemy_bullet_cfg = ServiceLocator.config_service.enemy_bullet
+        self.enemy_explosion_cfg = ServiceLocator.config_service.enemy_explosion
+        self.interface_cfg = ServiceLocator.config_service.interface
+        self.level_cfg = ServiceLocator.config_service.level
+        self.player_bullet_cfg = ServiceLocator.config_service.player_bullet
+        self.player_explosion_cfg = ServiceLocator.config_service.player_explosion
+        self.player_cfg = ServiceLocator.config_service.player
+        self.starfield_cfg = ServiceLocator.config_service.starfield
+        self.window_cfg = ServiceLocator.config_service.window
             
     async def run(self) -> None:
         self._create()

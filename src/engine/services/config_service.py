@@ -1,14 +1,28 @@
 import json
+import pathlib
+import os
 
 class ConfigsService:
     def __init__(self) -> None:
         self._prefix_path = "./assets/cfg/"
         self._configs = {}
-            # Archivos personales de config precargados
-        self.window = self.get("window.json")
-        self.player = self.get("player.json")
         self.enemies = self.get("enemies.json")
-            #... etcetera
+        self.enemy_bullet = self.get("enemy_bullet.json")
+        self.enemy_explosion = self.get("enemy_explosion.json")
+        self.interface = self.get("interface.json")
+        self.level = self.get("level_01.json")
+        self.player_bullet = self.get("player_bullet.json")
+        self.player_explosion = self.get("player_explosion.json")
+        self.player = self.get("player.json")
+        self.starfield = self.get("starfield.json")
+        self.window = self.get("window.json")
+
+        # # Precargar y asignar atributos a la clase con cada config
+        # for (_, _, files) in os.walk(self._prefix_path, topdown=True):
+        #     for file_path in files:
+        #         file_no_extension = pathlib.Path(file_path).stem # archivo sin extension
+        #         json_obj = self.get(file_path)
+        #         setattr(self, file_no_extension, json_obj)
 
     def get(self, filename:str):
         final_path = self._prefix_path + filename
