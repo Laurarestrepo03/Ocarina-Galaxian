@@ -11,9 +11,6 @@ def system_blink(ecs_world: esper.World, delta_time: float):
         if star_field.current_blink_time <= 0:
             star_field.is_blinking = not star_field.is_blinking
             
-            if star_field.is_blinking:
-                surface.surf.set_alpha(0)
-            else:
-                surface.surf.set_alpha(255)
+            surface.visible = star_field.is_blinking
                 
             star_field.current_blink_time = random.uniform(star_field.blink_rate_min, star_field.blink_rate_max)
