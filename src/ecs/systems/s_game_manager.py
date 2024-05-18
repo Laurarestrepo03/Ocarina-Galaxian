@@ -28,7 +28,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
         if  manager_component.state == GameState.READY:
             for entity, (c_t) in component:
                 world.delete_entity(entity)
-            enemies = create_level(world, level_cfg, enemies_cfg)
+            enemies = create_level(world, level_cfg, enemies_cfg, interface_cfg)
             manager_component.state = GameState.PLAY
             manager_component.current_enemyes = enemies
 

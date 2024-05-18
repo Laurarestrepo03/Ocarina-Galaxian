@@ -8,6 +8,7 @@ from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_enemy_bullet_spawner import CEnemyBulletSpawner
 from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_explosion_state import CExplosionState
+from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -16,6 +17,7 @@ from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_pause import CTagPause
+from src.ecs.components.tags.c_tag_score import CTagScore
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.engine.service_locator import ServiceLocator
 from src.ecs.components.c_input_command import CInputCommand
@@ -139,8 +141,10 @@ def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,
     ecs_world.add_component(enemy_entity, CTagEnemy(type))
     ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animations"]))
     
-def create_level(ecs_world:esper.World, level_info, enemies_info):
-    level_entity = ecs_world.create_entity()   
+def create_level(ecs_world:esper.World, level_info, enemies_info, interface_info):
+    level_entity = ecs_world.create_entity()  
+    ecs_world.add_component(level_entity, CLevel(interface_info))
+     
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
     velocity = level_info["velocity"]
@@ -150,6 +154,13 @@ def create_level(ecs_world:esper.World, level_info, enemies_info):
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
             enemies_count +=1
+            
+            
+    score_entity = create_text(ecs_world, interface_info["score_value"])
+    #s_csurf = ecs_world.component_for_entity(score_entity, CSurface)
+    #ecs_world.add_component(score_entity, CSurface)
+    ecs_world.add_component(score_entity, CTagScore())
+            
     return enemies_count
 
 def create_explosion(ecs_world:esper.World, pos:pygame.Vector2, entity_size:pygame.Vector2, explosion_info:dict):
