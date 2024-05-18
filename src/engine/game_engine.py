@@ -7,13 +7,16 @@ from src.create.prefab_creator import create_bullet, create_enemy_bullet_spawner
 from src.create.prefab_creator import create_level
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_game_state import GameState, CGameState
+from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_player_bullet_state import CPLayerBulletState, PlayerBulletState
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_high_score import CTagHighScore
 from src.ecs.components.tags.c_tag_level import CTagLevel
 from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.components.tags.c_tag_ready import CTagReady
+from src.ecs.components.tags.c_tag_score import CTagScore
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
@@ -58,9 +61,6 @@ class GameEngine:
         self.ecs_world = esper.World()
         self.execute_game = True
 
-        self.high_score = int(self.interface_cfg["high_score_value"]["text"])
-        self.score = 0
-        self.enemy_destroyed = None
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
 
@@ -121,10 +121,14 @@ class GameEngine:
         create_bullet(self.ecs_world, self.player_bullet_cfg, pygame.Vector2(0,0), pygame.Vector2(0,0), BulletType.PLAYER)
         create_input_player(self.ecs_world)
         create_star(self.ecs_world, self.window_cfg, self.starfield_cfg)
+        
         create_text(self.ecs_world, self.interface_cfg["1up_title"])
-        self.score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
         create_text(self.ecs_world, self.interface_cfg["high_score_title"])
-        self.high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"], str(self.high_score))
+        score_entity = create_text(self.ecs_world, self.interface_cfg["score_value"])
+        self.ecs_world.add_component(score_entity, CTagScore())
+        high_score_entity = create_text(self.ecs_world, self.interface_cfg["high_score_value"])
+        self.ecs_world.add_component(high_score_entity, CTagHighScore())
+            
         create_life(self.ecs_world, self.interface_cfg)
         create_flag(self.ecs_world, self.interface_cfg)
         self.level_entity = create_text(self.ecs_world, self.interface_cfg["level_text"])
@@ -163,8 +167,8 @@ class GameEngine:
 
             system_animation(self.ecs_world, self.delta_time)
             
-            system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg, self)
-            system_update_high_score(self.ecs_world,self.interface_cfg, self)
+            system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg)
+            system_update_high_score(self.ecs_world,self.interface_cfg)
             
         self.ecs_world._clear_dead_entities()
 
@@ -250,7 +254,8 @@ class GameEngine:
             self._player_c_s.visible = True
             #crear las vidas nuevamente
             create_life(self.ecs_world, self.interface_cfg)
-            #reiniciar el texto de nivel
+            
+            #reiniciar el texto de nivel   
             level_components = self.ecs_world.get_components(CSurface, CTagLevel) 
             for entity, (c_s, c_lev) in level_components:
                 font = ServiceLocator.fonts_service.get_font(self.interface_cfg["level_text"]["font"], self.interface_cfg["level_text"]["size"])
@@ -259,14 +264,18 @@ class GameEngine:
                                                                     self.interface_cfg["level_text"]["color"]["b"]))
                 c_s.surf = text_surface
                 c_s.area = c_s.surf.get_rect()
-            #reiniciar el texto de score
-            surface_component = self.ecs_world.component_for_entity(self.score_entity, CSurface)
+            
+            #reiniciar el texto de score      
+            level_component = self.ecs_world.get_component(CLevel)
+            for _, (c_l) in level_component:
+                c_l.score = 0                   
+            score_components =  self.ecs_world.get_components(CSurface, CTagScore)
             font = ServiceLocator.fonts_service.get_font(self.interface_cfg["score_value"]["font"], self.interface_cfg["score_value"]["size"])
-            surface = font.render("00", True, pygame.Color(self.interface_cfg["score_value"]["color"]["r"], 
-                                                                self.interface_cfg["score_value"]["color"]["g"], 
-                                                                self.interface_cfg["score_value"]["color"]["b"]))
-            surface_component.surf = surface
-            surface_component.area = surface_component.surf.get_rect()
+            color = pygame.Color(self.interface_cfg["score_value"]["color"]["r"], self.interface_cfg["score_value"]["color"]["g"], self.interface_cfg["score_value"]["color"]["b"])
+            for score, (c_s, _) in score_components:
+                c_s.surf = font.render("00", False, color)
+                c_s.area = c_s.surf.get_rect()
+
 
 
       
