@@ -48,7 +48,6 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
 
         elif manager_component.state == GameState.WIN:
             manager_component.current_level += 1
-            print(manager_component.current_level)
             for entity, (c_t) in component:
                 world.delete_entity(entity)
             for entity, (c_s, c_lev) in level_components:
