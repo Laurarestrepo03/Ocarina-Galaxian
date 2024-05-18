@@ -43,7 +43,7 @@
     },
     "high_score_value": {
         "font": "assets/fnt/PressStart2P.ttf",
-        "text": 1820,
+        "text": "480",
         "position": {
             "x": 131,
             "y": 24
@@ -62,6 +62,107 @@
         "position": {
             "x": 128,
             "y": 154
+        },
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "size": 8
+    },
+    "ready": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "sound": "assets/snd/game_start.ogg",
+        "text": "READY",
+        "position": {
+            "x": 128,
+            "y": 150
+        },
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "size": 8
+    },
+    "win": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "LEVEL COMPLETE",
+        "position": {
+            "x": 128,
+            "y": 130
+        },
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "size": 8
+    },
+    "ready_win": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "GET READY FOR THE NEXT LEVEL",
+        "position": {
+            "x": 128,
+            "y": 150
+        },
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "size": 8
+    },
+    "game_over": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "sound": "assets/snd/game_over.ogg",
+        "text": "GAME OVER",
+        "position": {
+            "x": 128,
+            "y": 150
+        },
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "size": 8
+    },
+    "lifes": {
+        "image": "assets/img/invaders_life.png",
+        "lifes_number": 3,
+        "position": {
+            "x": 160,
+            "y": 22
+        }
+    },
+    "level_flag": {
+        "image": "assets/img/invaders_level_flag.png",
+        "position": {
+            "x": 193,
+            "y": 18
+        }
+    },
+    "level_text": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "01",
+        "position": {
+            "x": 213,
+            "y": 24
+        },
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "size": 8
+    },
+    "game_over_help": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "Press Z to restart",
+        "position": {
+            "x": 128,
+            "y": 162
         },
         "color": {
             "r": 255,
