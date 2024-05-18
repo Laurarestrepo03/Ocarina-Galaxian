@@ -27,5 +27,5 @@ def system_enemy_movement(world:esper.World, delta_time:float, screen:pygame.Sur
     for _, (c_em) in system_enemy_movement_component:
         c_em.direction = direction
         c_em.x_relative_position = c_v.vel.x * delta_time
-        print("Posicion relativa en x enemigos: " + str(c_em.x_relative_position))
+        c_em.vel = c_v.vel.x
  

@@ -9,11 +9,17 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 
 def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float, screen:pygame.Surface):
     enemies_components = world.get_components(CTransform, CVelocity, CSurface, CSteering, CTagEnemy)
+    enemy_movement_component = world.get_component(CEnemyMovement)
     player_pos = world.component_for_entity(player_entity, CTransform)
-    
+    enemy_grup_vel = 0
+     
     #player_position = pygame.Vector2(player_pos[0], player_pos[1])
     
     for _, (c_t, c_v, c_s, c_st,_) in enemies_components:       
+        for _, (c_em) in enemy_movement_component:
+            c_st.return_position.x += c_em.x_relative_position
+            enemy_grup_vel = c_em.vel
+        
         if c_st.state == SteeringState.HUNTING:
             c_v.vel.y = 40
             c_v.vel.x = (player_pos.pos.x - c_t.pos.x)  
@@ -28,7 +34,7 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
             #print("Velocidad:" + str(c_v.vel))
             if abs(c_st.return_position.x - c_t.pos.x) < 3 and  abs(c_st.return_position.y - c_t.pos.y) < 3:
                 c_t.pos = c_st.return_position
-                c_v.vel = pygame.Vector2(0, 0)
+                c_v.vel = pygame.Vector2(enemy_grup_vel, 0)
                                
                 #world.delete_entity(c_st.entity)
                 world.remove_component(c_st.entity, CSteering)
@@ -37,7 +43,5 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
         elif c_st.state == SteeringState.GROUP:
             world.remove_component(c_st.entity, CSteering)
     
-        enemy_movement_component = world.get_component(CEnemyMovement)
-        for _, (c_em) in enemy_movement_component:
-            c_st.return_position.x += c_em.x_relative_position
+
     
