@@ -1,5 +1,6 @@
 import esper
 import pygame
+from src.ecs.components.c_enemy_movement import CEnemyMovement
 from src.ecs.components.c_steering import CSteering, SteeringState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -23,10 +24,10 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
                 c_st.state = SteeringState.RETURNING
                 
         elif c_st.state == SteeringState.RETURNING:
-            c_v.vel = (c_st.initial_position - c_t.pos)
+            c_v.vel = (c_st.return_position - c_t.pos)
             #print("Velocidad:" + str(c_v.vel))
-            if abs(c_st.initial_position.x - c_t.pos.x) < 3 and  abs(c_st.initial_position.y - c_t.pos.y) < 3:
-                c_t.pos = c_st.initial_position
+            if abs(c_st.return_position.x - c_t.pos.x) < 3 and  abs(c_st.return_position.y - c_t.pos.y) < 3:
+                c_t.pos = c_st.return_position
                 c_v.vel = pygame.Vector2(0, 0)
                                
                 #world.delete_entity(c_st.entity)
@@ -35,6 +36,8 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
         
         elif c_st.state == SteeringState.GROUP:
             world.remove_component(c_st.entity, CSteering)
-            
-        
-            
+    
+        enemy_movement_component = world.get_component(CEnemyMovement)
+        for _, (c_em) in enemy_movement_component:
+            c_st.return_position.x += c_em.x_relative_position
+    

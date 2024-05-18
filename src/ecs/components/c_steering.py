@@ -6,7 +6,7 @@ class CSteering:
         #self.follow_vector:pygame.Vector2 = pygame.Vector2(0,0)
         #self.avoid_vector:pygame.Vector2 = pygame.Vector2(0,0)
         self.entity = entity
-        self.initial_position = initial_position
+        self.return_position = initial_position
         self.state = SteeringState.HUNTING
         
 class SteeringState(Enum):
