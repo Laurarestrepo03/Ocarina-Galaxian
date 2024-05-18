@@ -63,16 +63,16 @@ class GameEngine:
         # Original bg_color (0, 200, 128)
 
     def _load_config_files(self):
-        self.enemies_cfg = ServiceLocator.config_service.enemies
-        self.enemy_bullet_cfg = ServiceLocator.config_service.enemy_bullet
-        self.enemy_explosion_cfg = ServiceLocator.config_service.enemy_explosion
-        self.interface_cfg = ServiceLocator.config_service.interface
-        self.level_cfg = ServiceLocator.config_service.level
-        self.player_bullet_cfg = ServiceLocator.config_service.player_bullet
-        self.player_explosion_cfg = ServiceLocator.config_service.player_explosion
-        self.player_cfg = ServiceLocator.config_service.player
-        self.starfield_cfg = ServiceLocator.config_service.starfield
-        self.window_cfg = ServiceLocator.config_service.window
+        self.enemies_cfg = ServiceLocator.configs_service.enemies
+        self.enemy_bullet_cfg = ServiceLocator.configs_service.enemy_bullet
+        self.enemy_explosion_cfg = ServiceLocator.configs_service.enemy_explosion
+        self.interface_cfg = ServiceLocator.configs_service.interface
+        self.level_cfg = ServiceLocator.configs_service.level
+        self.player_bullet_cfg = ServiceLocator.configs_service.player_bullet
+        self.player_explosion_cfg = ServiceLocator.configs_service.player_explosion
+        self.player_cfg = ServiceLocator.configs_service.player
+        self.starfield_cfg = ServiceLocator.configs_service.starfield
+        self.window_cfg = ServiceLocator.configs_service.window
             
     async def run(self) -> None:
         self._create()
