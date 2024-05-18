@@ -15,6 +15,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import BulletType, CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_high_score import CTagHighScore
 from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_pause import CTagPause
 from src.ecs.components.tags.c_tag_score import CTagScore
@@ -142,8 +143,10 @@ def create_enemy(ecs_world:esper.World, position:pygame.Vector2, velocity:int,
     ecs_world.add_component(enemy_entity, CAnimation(enemy_info["animations"]))
     
 def create_level(ecs_world:esper.World, level_info, enemies_info, interface_info):
-    level_entity = ecs_world.create_entity()  
-    ecs_world.add_component(level_entity, CLevel(interface_info))
+    level_component = ecs_world.get_component(CLevel)
+    if len(level_component) == 0:
+        level_entity = ecs_world.create_entity()  
+        ecs_world.add_component(level_entity, CLevel(interface_info))
      
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
@@ -154,12 +157,6 @@ def create_level(ecs_world:esper.World, level_info, enemies_info, interface_info
             position = pygame.Vector2(line["position"]["x"] + (line["gap"]*i), line["position"]["y"])
             create_enemy(ecs_world, position, velocity, enemies_info[line["enemy_type"]], line["enemy_type"]) 
             enemies_count +=1
-            
-            
-    score_entity = create_text(ecs_world, interface_info["score_value"])
-    #s_csurf = ecs_world.component_for_entity(score_entity, CSurface)
-    #ecs_world.add_component(score_entity, CSurface)
-    ecs_world.add_component(score_entity, CTagScore())
             
     return enemies_count
 

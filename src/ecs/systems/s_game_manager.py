@@ -1,7 +1,9 @@
 import esper
 import pygame
+import json
 from src.create.prefab_creator import create_level, create_player, create_text
 from src.ecs.components.c_blink import CBlink
+from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -10,6 +12,7 @@ from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_ready import CTagReady
 from src.ecs.components.c_game_state import CGameState, GameState
+from src.ecs.components.tags.c_tag_score import CTagScore
 from src.engine.service_locator import ServiceLocator
 
 def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemies_cfg, game_manager_entity, interface_cfg, player_entity, player_info):
@@ -19,7 +22,6 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
     player_pos = world.component_for_entity(player_entity, CTransform)
     life_component = world.get_component(CTagLife)
     level_components = world.get_components(CSurface, CTagLevel)
-
         
     if manager_component.state != GameState.PAUSED:
             manager_component.current_time += delta_time
@@ -42,6 +44,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             world.add_component(ready_win, CTagReady())
             manager_component.state = GameState.WIN
             manager_component.current_time = 0
+            update_high_score_value(world)
 
         elif manager_component.state == GameState.WIN:
             manager_component.current_level += 1
@@ -55,8 +58,9 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
                                                                                                             interface_cfg["level_text"]["color"]["b"]))
                 c_s.surf = text_surface
                 c_s.area = c_s.surf.get_rect()
+            
                 
-            enemies = create_level(world, level_cfg, enemies_cfg)
+            enemies = create_level(world, level_cfg, enemies_cfg, interface_cfg)
             manager_component.state = GameState.PLAY
             manager_component.current_enemyes = enemies
         
@@ -66,6 +70,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             if  manager_component.time_dead >= 3:
                 if manager_component.number_lives == 0 and not manager_component.game_over_text_created:
                     manager_component.state = GameState.GAME_OVER
+                    update_high_score_value(world)
                     game_over = create_text(world, 
                             interface_cfg["game_over"])
                     world.add_component(game_over, CTagReady())
@@ -92,7 +97,18 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
                 manager_component.game__help_text_created = True
 
 
+def update_high_score_value(world:esper.World):
+    level_component = world.get_component(CLevel)
+    
+    for _, (c_l) in level_component:
+        file_path = 'assets/cfg/interface.json'
+        with open(file_path, 'r') as archivo_json:
+            datos = json.load(archivo_json)
+            
+        datos["high_score_value"]["text"] = str(c_l.high_score)
         
+        with open(file_path, 'w') as archivo_json:
+            json.dump(datos, archivo_json, indent=4)   
         
 
 
