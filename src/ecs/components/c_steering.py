@@ -7,9 +7,10 @@ class CSteering:
         #self.avoid_vector:pygame.Vector2 = pygame.Vector2(0,0)
         self.entity = entity
         self.return_position = initial_position
-        self.state = SteeringState.HUNTING
+        self.state = SteeringState.JUMPING
+        self.jumping_counter = 0
         
 class SteeringState(Enum):
     HUNTING = 0
     RETURNING = 1
-    GROUP = 2
+    JUMPING = 2

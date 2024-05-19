@@ -1,6 +1,7 @@
 import esper
 import pygame
 from src.ecs.components.c_enemy_movement import CEnemyMovement
+from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_steering import CSteering, SteeringState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -9,18 +10,29 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 
 def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float, screen:pygame.Surface):
     enemies_components = world.get_components(CTransform, CVelocity, CSurface, CSteering, CTagEnemy)
-    enemy_movement_component = world.get_component(CEnemyMovement)
+    level_component = world.get_component(CLevel)
     player_pos = world.component_for_entity(player_entity, CTransform)
     enemy_grup_vel = 0
      
     #player_position = pygame.Vector2(player_pos[0], player_pos[1])
     
     for _, (c_t, c_v, c_s, c_st,_) in enemies_components:       
-        for _, (c_em) in enemy_movement_component:
-            c_st.return_position.x += c_em.x_relative_position
-            enemy_grup_vel = c_em.vel
+        for _, (c_el) in level_component:
+            c_st.return_position.x += c_el.x_relative_position
+            enemy_grup_vel = c_el.vel
         
-        if c_st.state == SteeringState.HUNTING:
+        if c_st.state == SteeringState.JUMPING:
+            if c_st.jumping_counter < 20:
+                c_v.vel.y = -20
+                c_v.vel.x = (player_pos.pos.x - c_t.pos.x)  
+                cuad_rect = c_s.surf.get_rect(topleft=c_t.pos)
+                screen_rect = screen.get_rect()
+                c_st.jumping_counter += 1
+            else:
+                c_st.jumping_counter = 5 
+                c_st.state = SteeringState.HUNTING
+            
+        elif c_st.state == SteeringState.HUNTING:
             c_v.vel.y = 40
             c_v.vel.x = (player_pos.pos.x - c_t.pos.x)  
             cuad_rect = c_s.surf.get_rect(topleft=c_t.pos)
