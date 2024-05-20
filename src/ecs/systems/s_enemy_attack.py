@@ -27,12 +27,14 @@ def system_enemy_attack(world:esper.World, delta_time:float, level_info:dict, ga
                     enemies_steering_components = world.get_components(CEnemySteering)
                     if len (enemies_steering_components) < 2:
                         enemies_components_updated = eliminate_already_selected(enemies_components, enemies_steering_components)
-                        enemy_selected = random.choice(enemies_components_updated)
                         
-                        enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
-                        world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position))   
-                        world.add_component(enemy_selected[0], CEnemyBulletSpawner(level_info))
-                        ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
+                        if len(enemies_components_updated) > 0:
+                            enemy_selected = random.choice(enemies_components_updated)
+                        
+                            enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
+                            world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position))   
+                            world.add_component(enemy_selected[0], CEnemyBulletSpawner(level_info))
+                            ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
     
         
 def random_attack_time()->float:
