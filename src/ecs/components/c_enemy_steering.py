@@ -7,6 +7,7 @@ class CEnemySteering:
         self.return_position = initial_position
         self.state = EnemySteeringState.JUMPING
         self.jumping_counter = 0
+        self.fired = False
         
 class EnemySteeringState(Enum):
     HUNTING = 0

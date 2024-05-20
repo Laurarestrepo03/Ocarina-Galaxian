@@ -21,6 +21,7 @@ from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
 from src.ecs.systems.s_collision_enemy_player import system_collision_enemy_player
+from src.ecs.systems.s_enemy_attack_fire import system_enemy_attack_fire
 from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
@@ -177,6 +178,7 @@ class GameEngine:
             system_update_high_score(self.ecs_world,self.interface_cfg)
             system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg)
             system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
+            system_enemy_attack_fire(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
                   
         self.ecs_world._clear_dead_entities()
 
