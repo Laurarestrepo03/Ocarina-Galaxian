@@ -11,4 +11,5 @@ class FiringState(Enum):
     NOT_FIRED = 0
     FIRING = 1
     FIRED = 2
+    STEERING = 3
 

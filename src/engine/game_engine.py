@@ -20,7 +20,7 @@ from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
 from src.ecs.systems.s_collision_enemy_player import system_collision_enemy_player
 from src.ecs.systems.s_enemy_attack_fire import system_enemy_attack_fire
-from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
+from src.ecs.systems.s_enemy_bullet_spawn_convoy import system_enemy_bullet_spawn_convoy
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
@@ -153,7 +153,7 @@ class GameEngine:
             
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
-            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
+            system_enemy_bullet_spawn_convoy(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
             system_collision_enemy_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
 
