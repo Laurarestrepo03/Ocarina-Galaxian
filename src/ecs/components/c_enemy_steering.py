@@ -1,16 +1,14 @@
 import pygame
 from enum import Enum
 
-class CSteering:
+class CEnemySteering:
     def __init__(self, entity:int, initial_position:pygame.Vector2):
-        #self.follow_vector:pygame.Vector2 = pygame.Vector2(0,0)
-        #self.avoid_vector:pygame.Vector2 = pygame.Vector2(0,0)
         self.entity = entity
         self.return_position = initial_position
-        self.state = SteeringState.JUMPING
+        self.state = EnemySteeringState.JUMPING
         self.jumping_counter = 0
         
-class SteeringState(Enum):
+class EnemySteeringState(Enum):
     HUNTING = 0
     RETURNING = 1
     JUMPING = 2

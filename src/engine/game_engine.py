@@ -167,7 +167,7 @@ class GameEngine:
             system_player_limit(self.ecs_world, self.screen)
             system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
-            system_collision_enemy_player(self.ecs_world, self._player_entity, self.player_cfg, self.enemy_explosion_cfg, self.game_manager)
+            system_collision_enemy_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
 
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
 
@@ -175,7 +175,7 @@ class GameEngine:
             
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg)
             system_update_high_score(self.ecs_world,self.interface_cfg)
-            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg, self.screen, self)
+            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg)
             system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
                   
         self.ecs_world._clear_dead_entities()

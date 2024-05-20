@@ -6,7 +6,6 @@ import pygame
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_enemy_bullet_spawner import CEnemyBulletSpawner
-from src.ecs.components.c_enemy_movement import CEnemyMovement
 from src.ecs.components.c_enemy_spawner import Line
 from src.ecs.components.c_explosion_state import CExplosionState
 from src.ecs.components.c_level import CLevel
@@ -149,11 +148,6 @@ def create_level(ecs_world:esper.World, level_info, enemies_info, interface_info
         level_entity = ecs_world.create_entity()  
         ecs_world.add_component(level_entity, CLevel(interface_info))
     
-    '''enemy_movement_component = ecs_world.get_component(CEnemyMovement)
-    if len(enemy_movement_component) == 0:
-        enemy_movement_entity = ecs_world.create_entity()  
-        ecs_world.add_component(enemy_movement_entity, CEnemyMovement())'''
-
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
     velocity = level_info["velocity"]
