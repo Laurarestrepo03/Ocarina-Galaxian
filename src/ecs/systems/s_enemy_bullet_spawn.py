@@ -41,7 +41,7 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
                     c_te = ecs_world.component_for_entity(firing_enemy, CTagEnemy)
                     c_te.timer += delta_time
 
-                    if c_te.timer > 0.2:
+                    if c_te.timer > 0.15:
                         c_t = ecs_world.component_for_entity(firing_enemy, CTransform)
                         pos = c_t.pos.copy()
                         c_s = ecs_world.component_for_entity(firing_enemy, CSurface)
