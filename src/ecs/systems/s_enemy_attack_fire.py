@@ -13,7 +13,7 @@ def system_enemy_attack_fire(world:esper.World, bullet_info:dict, delta_time:flo
         
         c_bs = world.component_for_entity(entity, CEnemyBulletSpawner)       
         if c_es.state == EnemySteeringState.HUNTING:
-            if c_bs.timer < c_bs.max_time and c_es.state :
+            if c_bs.timer < c_bs.max_time * 3 and c_es.state == EnemySteeringState.HUNTING :
                 c_bs.timer += delta_time
             else:
                 c_t = world.component_for_entity(entity, CTransform)
