@@ -13,7 +13,7 @@ def system_player_limit(ecs_world:esper.World, screen:pygame.Surface):
 
     for _, (c_t, _, c_s, _) in components:
         player_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
-        if player_rect.left < 26:
-            c_t.pos.x = 26
-        elif player_rect.right > screen_rect.width - 26:
-            c_t.pos.x = screen_rect.width - player_rect.width - 26
+        if player_rect.left < 10:
+            c_t.pos.x = 10
+        elif player_rect.right > screen_rect.width - 10:
+            c_t.pos.x = screen_rect.width - player_rect.width - 10
