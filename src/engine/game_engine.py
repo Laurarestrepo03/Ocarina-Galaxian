@@ -163,7 +163,7 @@ class GameEngine:
             
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg)
             system_update_high_score(self.ecs_world,self.interface_cfg)
-            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg)
+            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg, self.game_manager)
             system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
             system_enemy_attack_fire(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
                   
