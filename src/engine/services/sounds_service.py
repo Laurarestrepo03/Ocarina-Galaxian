@@ -8,3 +8,4 @@ class SoundsService:
         if path not in self._sounds:
             self._sounds[path] = pygame.mixer.Sound(path)
         self._sounds[path].play()
+        

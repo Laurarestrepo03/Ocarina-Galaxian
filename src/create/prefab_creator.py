@@ -147,7 +147,7 @@ def create_level(ecs_world:esper.World, level_info, enemies_info, interface_info
     if len(level_component) == 0:
         level_entity = ecs_world.create_entity()  
         ecs_world.add_component(level_entity, CLevel(interface_info))
-     
+    
     line:Line
     #velocity = pygame.Vector2(level_info["velocity"], 0)
     velocity = level_info["velocity"]

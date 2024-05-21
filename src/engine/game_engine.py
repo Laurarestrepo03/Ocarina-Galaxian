@@ -18,7 +18,9 @@ from src.ecs.components.tags.c_tag_score import CTagScore
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_blink import system_blink
 from src.ecs.systems.s_collision_bullet_player import system_collision_bullet_player
-from src.ecs.systems.s_enemy_bullet_spawn import system_enemy_bullet_spawn
+from src.ecs.systems.s_collision_enemy_player import system_collision_enemy_player
+from src.ecs.systems.s_enemy_attack_fire import system_enemy_attack_fire
+from src.ecs.systems.s_enemy_bullet_spawn_convoy import system_enemy_bullet_spawn_convoy
 from src.ecs.systems.s_enemy_movement import system_enemy_movement
 from src.create.prefab_creator import create_input_player, create_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
@@ -26,6 +28,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_bullet_limit import system_bullet_limit
+from src.ecs.systems.s_enemy_steering import system_enemy_steering
 from src.ecs.systems.s_explosion_state import system_explosion_state
 from src.ecs.systems.s_game_manager import system_game_manager
 from src.ecs.systems.s_pause import system_pause
@@ -35,6 +38,7 @@ from src.ecs.systems.s_player_bullet_state import system_player_bullet_state
 from src.ecs.systems.s_player_limit import system_player_limit
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_star_field import system_star_field
+from src.ecs.systems.s_enemy_attack import system_enemy_attack
 from src.ecs.systems.s_update_high_score import system_update_high_score
 from src.ecs.systems.s_update_score import system_update_score
 from src.engine.service_locator import ServiceLocator
@@ -59,6 +63,7 @@ class GameEngine:
         self.ecs_world = esper.World()
         self.execute_game = True
 
+        self.degree = 0
         # Original framerate = 0
         # Original bg_color (0, 200, 128)
 
@@ -145,10 +150,12 @@ class GameEngine:
             system_movement(self.ecs_world, self.delta_time)
             system_enemy_movement(self.ecs_world, self.delta_time, self.screen)
             system_explosion_state(self.ecs_world)
+            
             system_bullet_limit(self.ecs_world, self.screen)
             system_player_limit(self.ecs_world, self.screen)
-            system_enemy_bullet_spawn(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
+            system_enemy_bullet_spawn_convoy(self.ecs_world, self.enemy_bullet_cfg, self.enemies_cfg, self.level_cfg, self.delta_time, self.game_manager)
             system_collision_bullet_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
+            system_collision_enemy_player(self.ecs_world, self.player_explosion_cfg, self.game_manager)
 
             system_player_bullet_state(self.ecs_world, self.enemy_explosion_cfg, self, self.game_manager)
 
@@ -156,7 +163,10 @@ class GameEngine:
             
             system_update_score(self.ecs_world,self.interface_cfg,self.enemies_cfg)
             system_update_high_score(self.ecs_world,self.interface_cfg)
-            
+            system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg, self.game_manager)
+            system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
+            system_enemy_attack_fire(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
+        
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
@@ -267,11 +277,3 @@ class GameEngine:
                 c_s.surf = font.render("00", False, color)
                 c_s.area = c_s.surf.get_rect()
 
-
-
-      
-
-            
-
-
-            

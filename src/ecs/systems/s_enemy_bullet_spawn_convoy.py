@@ -4,13 +4,14 @@ import random
 
 from src.create.prefab_creator import create_bullet
 from src.ecs.components.c_enemy_bullet_spawner import CEnemyBulletSpawner
+from src.ecs.components.c_enemy_steering import CEnemySteering
 from src.ecs.components.c_game_state import CGameState, GameState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_bullet import BulletType
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy, FiringState
 
-def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cfg: dict, lvl_cfg:dict, delta_time:float, game_manager_entity):
+def system_enemy_bullet_spawn_convoy(ecs_world:esper.World, bullet_cfg:dict, enemies_cfg: dict, lvl_cfg:dict, delta_time:float, game_manager_entity):
     spawner_component = ecs_world.get_component(CEnemyBulletSpawner)
     game_state = ecs_world.component_for_entity(game_manager_entity,CGameState)
     if game_state.state != GameState.GAME_OVER:
@@ -67,7 +68,7 @@ def system_enemy_bullet_spawn(ecs_world:esper.World, bullet_cfg:dict, enemies_cf
                 elif len(non_fired_entities) > 0:
                     random_enemy = random.choice(non_fired_entities)
                     c_te = ecs_world.component_for_entity(random_enemy, CTagEnemy)
-                    c_te.firing_state = FiringState.FIRING
-
-    
-    
+                    if not ecs_world.has_component(random_enemy, CEnemySteering):
+                        c_te.firing_state = FiringState.FIRING
+                    else:
+                        break
