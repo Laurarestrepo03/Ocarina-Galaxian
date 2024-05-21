@@ -14,14 +14,13 @@ from src.engine.service_locator import ServiceLocator
 
 def system_enemy_attack(world:esper.World, delta_time:float, level_info:dict, game_manager_entity):    
     enemy_attack_component = world.get_component(CLevel)
-    
     game_state = world.component_for_entity(game_manager_entity,CGameState)
+
     if game_state.state != GameState.GAME_OVER:
-    
         for _, (c_ea) in enemy_attack_component:
             c_ea.current_attack_interval += delta_time
-            
-            if c_ea.current_attack_interval >= random_attack_time():
+
+            if c_ea.current_attack_interval >=  random_attack_time():
                 c_ea.current_attack_interval = 0
                 enemies_components = world.get_components(CTransform, CVelocity, CTagEnemy)
                 if len(enemies_components) >= 1:
@@ -31,10 +30,8 @@ def system_enemy_attack(world:esper.World, delta_time:float, level_info:dict, ga
                         
                         if len(enemies_components_updated) > 0:
                             enemy_selected = random.choice(enemies_components_updated)
-                        
+
                             enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
-                            world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position))   
-                            world.add_component(enemy_selected[0], CEnemyBulletSpawner(level_info))
                             ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
                             enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
                             world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position)) 

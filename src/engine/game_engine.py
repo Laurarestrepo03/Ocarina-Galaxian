@@ -166,7 +166,7 @@ class GameEngine:
             system_enemy_attack(self.ecs_world, self.delta_time, self.level_cfg, self.game_manager)
             system_enemy_steering(self.ecs_world, self._player_entity, self.delta_time, self.screen)
             system_enemy_attack_fire(self.ecs_world, self.enemy_bullet_cfg, self.delta_time)
-                  
+        
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
@@ -273,11 +273,3 @@ class GameEngine:
                 c_s.surf = font.render("00", False, color)
                 c_s.area = c_s.surf.get_rect()
 
-
-
-      
-
-            
-
-
-            
