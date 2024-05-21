@@ -36,7 +36,6 @@ def system_enemy_attack(world:esper.World, delta_time:float, level_info:dict, ga
                             enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
                             world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position)) 
                             world.add_component(enemy_selected[0], CEnemyBulletSpawnerHunting())
-                            ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
     
         
 def random_attack_time()->float:
