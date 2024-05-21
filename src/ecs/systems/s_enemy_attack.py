@@ -36,14 +36,14 @@ def system_enemy_attack(world:esper.World, delta_time:float, level_info:dict, ga
                             world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position))   
                             world.add_component(enemy_selected[0], CEnemyBulletSpawner(level_info))
                             ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
-                        enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
-                        world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position)) 
-                        world.add_component(enemy_selected[0], CEnemyBulletSpawnerHunting())
-                        ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
+                            enemy_initial_position = pygame.Vector2(enemy_selected[1][0].pos.x, enemy_selected[1][0].pos.y) 
+                            world.add_component(enemy_selected[0], CEnemySteering(enemy_selected[0], enemy_initial_position)) 
+                            world.add_component(enemy_selected[0], CEnemyBulletSpawnerHunting())
+                            ServiceLocator.sounds_service.play(level_info["enemy_attack_sound"])
     
         
 def random_attack_time()->float:
-    return random.uniform(2.0, 10.0)
+    return random.uniform(4.0, 10.0)
 
 def eliminate_already_selected(enemies_components:list, enemies_steering_components:list)->list:
     i = 0
