@@ -197,7 +197,7 @@ class GameEngine:
                 c_v.vel = vel
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.START:
-                if self.game_state.state == GameState.PLAY:
+                if self.game_state.state == GameState.PLAY or self.game_state.state == GameState.DEAD:
                     self.game_state.state = GameState.PAUSED
                     pause_text_entity = create_text(self.ecs_world, self.interface_cfg["pause"])
                     self.ecs_world.add_component(pause_text_entity, CBlink(0.5, 0.5))
@@ -205,7 +205,11 @@ class GameEngine:
                     ServiceLocator.sounds_service.play(self.interface_cfg["pause"]["sound"])
                 else:
                     if self.game_state.state == GameState.PAUSED:
-                        self.game_state.state = GameState.PLAY
+                        if self.game_state.dead == True:
+                            self.game_state.state = GameState.DEAD
+                            self.game_state.dead=False
+                        else:
+                            self.game_state.state = GameState.PLAY
                         system_pause(self.ecs_world)
         if c_input.name == "PLAYER_FIRE" and c_input.phase == CommandPhase.START and self.game_state.state == GameState.GAME_OVER:
             enemyes = self.ecs_world.get_components(CTagEnemy)
