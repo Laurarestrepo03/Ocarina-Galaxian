@@ -58,6 +58,6 @@
             "gap": 18
         }
     ],
-    "min_bullet_interval": 2,
-    "max_bullet_interval": 3
+    "min_bullet_interval": 4,
+    "max_bullet_interval": 5
 }
