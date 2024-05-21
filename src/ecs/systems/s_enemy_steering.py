@@ -1,6 +1,6 @@
 import esper
 import pygame
-from src.ecs.components.c_enemy_bullet_spawner import CEnemyBulletSpawner
+from src.ecs.components.c_enemy_bullet_spawner_hunting import CEnemyBulletSpawnerHunting
 from src.ecs.components.c_level import CLevel
 from src.ecs.components.c_enemy_steering import CEnemySteering, EnemySteeringState
 from src.ecs.components.c_surface import CSurface
@@ -48,8 +48,4 @@ def system_enemy_steering(world:esper.World, player_entity:int, delta_time:float
                 c_v.vel = pygame.Vector2(enemy_grup_vel, 0)
 
                 world.remove_component(c_st.entity, CEnemySteering)
-                world.remove_component(c_st.entity, CEnemyBulletSpawner)
-
-    
-
-    
+                world.remove_component(c_st.entity, CEnemyBulletSpawnerHunting) 
