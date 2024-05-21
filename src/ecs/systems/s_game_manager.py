@@ -64,6 +64,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
             manager_component.current_enemyes = enemies
         
         elif manager_component.state == GameState.DEAD:
+            manager_component.dead = True
             manager_component.time_dead += delta_time
 
             if  manager_component.time_dead >= 3:
@@ -76,6 +77,7 @@ def system_game_manager(world : esper.World, delta_time: float, level_cfg, enemi
                     ServiceLocator.sounds_service.play(interface_cfg["game_over"]["sound"])
                     manager_component.game_over_text_created = True
                 else:
+                    manager_component.dead = False
                     size = player_surface.area.size
                     player_pos.pos = pygame.Vector2(player_info["spawn_point"]["x"] - (size[0]/2),
                             player_info["spawn_point"]["y"] - (size[1]/2))

@@ -29,5 +29,7 @@ def system_collision_bullet_player(ecs_world:esper.World, explosion_cfg:dict, ga
             b_c_s.visible= False
         elif (game_state.state == GameState.WIN and b_tb.type == BulletType.ENEMY):
             b_c_s.visible= False
+        elif (game_state.state == GameState.READY and b_tb.type == BulletType.ENEMY):
+            b_c_s.visible= False
         else:
             b_c_s.visible= True
