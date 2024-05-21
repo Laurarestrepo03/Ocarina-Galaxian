@@ -1,16 +1,16 @@
 import random
 import esper
-from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_game_state import CGameState, GameState
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_star import CTagStar
 
 
-def system_star_field(ecs_world:esper.World, window_cfg, delta_time, execute_game):
+def system_star_field(ecs_world:esper.World, window_cfg, delta_time, game_state:CGameState):
     star_entities = ecs_world.get_components(CTransform, CVelocity, CTagStar)
     for entity, (c_transform, c_velocity, _) in star_entities:
         c_transform = ecs_world.component_for_entity(entity, CTransform)
-        if not execute_game:
+        if game_state.state == GameState.PAUSED:
             c_transform.pos += c_velocity.vel * delta_time
         
         if c_transform.pos.y > window_cfg["size"]["h"]:

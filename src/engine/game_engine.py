@@ -136,7 +136,7 @@ class GameEngine:
 
     def _update(self):
         #system_screen_bounce(self.ecs_world, self.screen) # ver si en realidad se usa
-        system_star_field(self.ecs_world, self.window_cfg, self.delta_time, self.execute_game)
+        system_star_field(self.ecs_world, self.window_cfg, self.delta_time, self.game_state)
         system_blink(self.ecs_world, self.delta_time)
         system_game_manager(self.ecs_world, self.delta_time, self.level_cfg, self.enemies_cfg, self.game_manager, self.interface_cfg, self._player_entity, self.player_cfg)
         
