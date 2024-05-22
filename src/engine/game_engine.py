@@ -43,6 +43,8 @@ from src.ecs.systems.s_update_high_score import system_update_high_score
 from src.ecs.systems.s_update_score import system_update_score
 from src.engine.service_locator import ServiceLocator
 
+pygbag = False # Cambiar a True cuando se compila con pygbag
+
 class GameEngine:
     def __init__(self) -> None:
         self._load_config_files()
@@ -50,7 +52,7 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
         self.screen = pygame.display.set_mode((self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 
-                                              pygame.SCALED)
+                                              0 if pygbag else pygame.SCALED)
 
         self.clock = pygame.time.Clock()
         self.is_running = False

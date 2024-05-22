@@ -3,6 +3,7 @@
 ### Enlaces relevantes
 - [Wiki](https://github.com/Laurarestrepo03/Ocarina-Galaxian/wiki)
 - [Tablero de tareas](https://github.com/users/Laurarestrepo03/projects/2)
+- [Juego publicado](https://laurarp1.itch.io/invaders)
 
 ### Miembros
 - Leonardo Barrios [@leonardo-bp](https://github.com/leonardo-bp)
